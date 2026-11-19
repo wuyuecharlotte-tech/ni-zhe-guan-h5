@@ -2,6 +2,9 @@
 const path = require('path');
 const {chromium} = require('playwright');
 const want = process.argv[2] || '邓肯';
+// 第二个参数：文件名后缀；第三个参数：偏离目标路线的站（如 0:0,8:1 表示第 1 站选 A、第 9 站选 B）
+const suffix = process.argv[3] || '';
+const dev = new Map((process.argv[4] || '').split(',').filter(Boolean).map(x => x.split(':').map(Number)));
 (async () => {
   const b = await chromium.launch();
   const pg = await (await b.newContext({viewport: {width: 360, height: 640}, deviceScaleFactor: 3})).newPage();
@@ -16,13 +19,14 @@ const want = process.argv[2] || '邓肯';
       return best;
     });
   }, want);
+  dev.forEach((v, k) => { picks[k] = v; });
   await pg.click('[data-act=start]');
   for (const p of picks) { await pg.click(`[data-pick="${p}"]`); await pg.click('[data-act=next]'); }
   console.log(want, picks.join(''), '→', await pg.textContent('h1'));
   const out = path.resolve(__dirname, '../listing/screenshots');
-  await pg.screenshot({path: path.join(out, '4-结局.png')});
+  await pg.screenshot({path: path.join(out, '4-结局' + suffix + '.png')});
   await pg.click('[data-act=poster]'); await pg.waitForSelector('.posterModal img');
   await pg.waitForFunction(() => document.querySelector('.posterModal img').complete);
-  await pg.screenshot({path: path.join(out, '5-晒战绩.png')});
+  await pg.screenshot({path: path.join(out, '5-晒战绩' + suffix + '.png')});
   await b.close();
 })();

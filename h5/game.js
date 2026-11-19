@@ -92,12 +92,14 @@
     chapterArt?art(...chapterArt):null));
  }
  const shortName=n=>n.includes("魔术师")?"魔术师":n.includes("科比")?"科比":n.includes("阿德托昆博")?"字母哥":n.split("·").pop();
- // 成分鉴定：每位球星按「对上的关键选择 / 他的关键选择总数」算相似度，立方后归一，取前四位，其余并入「其他球星」。
+ const STEEP=5; // 越大，对得最多的那位占比越高
+ const STAR={"詹姆斯":14,"科比":6,"乔丹":6,"库里":4,"杜兰特":2.5}; // 话题球星加权，更容易出现在成分里
+ // 成分鉴定：每位球星按「对上的关键选择 / 他的关键选择总数」算相似度，按 STEEP 次方放大再乘话题加权后归一，取前四位，其余并入「其他球星」。
  function getResult(){
   const james=routes.find(r=>r.name.includes("詹姆斯"));
   const exact=nodes.every((n,i)=>n.james===picks[i]);
   if(exact&&james)return {exact,mix:[{r:james,pct:100}],other:0};
-  const raw=routes.map(r=>{const m=r.anchors.filter(([i,o])=>picks[i]===o).length;return {r,m,w:Math.pow(m/r.anchors.length,3)};}).filter(x=>x.m>0).sort((a,b)=>b.w-a.w||b.m-a.m);
+  const raw=routes.map(r=>{const m=r.anchors.filter(([i,o])=>picks[i]===o).length;return {r,m,w:Math.pow(m/r.anchors.length,STEEP)*(STAR[shortName(r.name)]||1)};}).filter(x=>x.m>0).sort((a,b)=>b.w-a.w||b.m-a.m);
   const sum=raw.reduce((t,x)=>t+x.w,0);
   const mix=sum?raw.slice(0,4).map(x=>({r:x.r,pct:Math.round(x.w/sum*100)})).filter(x=>x.pct>=3):[];
   let over=mix.reduce((t,x)=>t+x.pct,0)-100;

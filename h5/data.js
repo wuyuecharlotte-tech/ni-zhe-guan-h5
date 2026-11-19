@@ -182,6 +182,13 @@ window.GAME = (() => {
     {text:'NBA／AP：次战前采访，詹姆斯谈J.R.史密斯的反弹能力',site:'NBA 官网'},
     {text:'NBA刊载的现场采访：詹姆斯谈如何配合东契奇（2026年1月）',site:'NBA 官网'}
   );
+  // 话题球星多挂几个标志性选择（展开后的站序），让他们更容易被鉴定出来。
+  const extraAnchors = {
+    '科比':[[6,3],[11,1]],
+    '乔丹':[[5,0],[8,0],[11,1]],
+    '库里':[[6,1],[9,0],[12,0]]
+  };
+  routes.forEach(route=>{ const k=Object.keys(extraAnchors).find(n=>route.name.includes(n)); if(k) route.anchors.push(...extraAnchors[k]); });
   // 非詹姆斯向的旧账标签（按展开后的 15 站、每站 4 个选项）：不同打法翻出不同的旧账。
   const ledger = [
     [[],[],[],['quiet']],
