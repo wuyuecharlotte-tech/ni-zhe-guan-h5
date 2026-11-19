@@ -32,3 +32,4 @@ body{padding-bottom:1.7rem}
 .wordmark{background:none;border:0;padding:0;font:inherit;font-weight:780;cursor:pointer}
 body{padding-top:max(env(safe-area-inset-top,0px),var(--host-top,0px));padding-bottom:env(safe-area-inset-bottom,0px)}
 .sources{padding-left:1.1rem}.sources li{margin:.15rem 0}
+.posterModal{position:fixed;inset:0;z-index:20;background:rgba(10,10,8,.82);display:grid;place-items:center;padding:max(1rem,var(--host-top,0px)) 1rem 1rem;overflow:auto}.posterBox{width:min(100%,26rem);background:var(--panel);border:1px solid var(--line);padding:1rem}.posterBox img{display:block;width:100%;height:auto;border:1px solid var(--line)}.posterTip{margin:.7rem 0}.posterActions{justify-content:flex-end}

@@ -107,6 +107,23 @@
   const leaning=flagged.length>=3&&dimensions.length>=2&&points>=4;
   return {sums,flagged,dimensions,points,leaning};
  }
+ let lastPoster=null,posterBusy=false;
+ async function openPoster(){
+  if(posterBusy||!lastPoster)return; posterBusy=true;
+  let url="";
+  try{
+   const cv=window.POSTER.draw(lastPoster); const blob=await window.POSTER.toBlob(cv); url=URL.createObjectURL(blob);
+  }catch{posterBusy=false;const st=app.querySelector(".posterStatus");if(st)st.textContent="海报没生成出来，再点一次试试。";return;}
+  const close=()=>{modal.remove();URL.revokeObjectURL(url);posterBusy=false;document.querySelector('[data-act="poster"]')?.focus();};
+  const closeBtn=h("button",{class:"ghost",type:"button"},"关闭");closeBtn.addEventListener("click",close);
+  const postBtn=h("button",{class:"primary",type:"button"},"发到虎扑");
+  const tip=h("p",{class:"small posterTip"},"这是你这份生涯的海报。");
+  postBtn.addEventListener("click",()=>{tip.textContent="预览版：正式版会在这里打开虎扑发帖编辑器，海报和文案已经填好，你确认后再发。";});
+  const modal=h("div",{class:"posterModal",role:"dialog","aria-modal":"true","aria-label":"晒战绩海报"},
+   h("div",{class:"posterBox"},h("img",{src:url,alt:"我的生涯结局海报：" + lastPoster.heading}),tip,h("div",{class:"actions posterActions"},postBtn,closeBtn)));
+  modal.addEventListener("click",e=>{if(e.target===modal)close();});
+  document.body.append(modal);postBtn.focus();
+ }
  const host=u=>{try{return new URL(u).hostname.replace(/^www\./,"");}catch{return "";}};
  function result(){
   const {exact,top}=getResult(),a=audit();
@@ -115,6 +132,9 @@
   const ranked=a.dimensions.sort((x,y)=>a.sums[y]-a.sums[x]);
   const trust=trustAt(nodes.length),locker=trust>=3?"遇到问题，他愿意在同一个镜头里和你把话讲完。":trust<=-2?"球可以照传，但散场后他先走了。":"对外各说各的，回队里还能看同一份录像。";
   const hot=a.sums.stats>=2&&a.sums.mic>=2?"赛后问你今天怎么赢的，你说稍等，我把历史划成三个阶段给你讲。":a.sums.exit>=2&&a.sums.glory>=2?"主场字幕才打出下赛季再见，他已经在新城市采访里说我们了。":ranked[0]==="stats"?"哥们，你的赛后回顾怎么还能按列排序？":ranked[0]==="exit"?"下赛季的阵容深度表怎么已经有四个城市了？":ranked[0]==="glory"?"队友：我们赢了。海报：我听见的是他赢了。":ranked[0]==="mic"?"媒体日主持人：我本来只准备问一个问题。":"这回没刷出任何黑料。评论区决定延长讨论时间。";
+  lastPoster={heading,opener,hot,
+   players:top.map(({r})=>({name:r.name,title:r.title})),
+   badges:ranked.map(k=>({title:badges[k].title,count:a.sums[k],line:a.sums[k]===1?badges[k].one:badges[k].more}))};
   const li=(title,text)=>h("li",null,h("b",null,title),h("p",{class:"chosen"},text));
   return h("section",{class:"card result"},
    h("div",{class:"kicker"},"终场哨 / 生涯结算"),
@@ -125,7 +145,8 @@
     h("b",null,badges[k].title),h("p",null,a.sums[k]===1?badges[k].one:badges[k].more),h("p",{class:"small"},badges[k].fan),h("span",{class:"small"},"触发 "+a.sums[k]+" 次"))))]:null,
    h("div",{class:"note"},h("b",null,"更衣室关系："),locker),
    top.length?[h("h2",null,"球场上更像谁"),h("div",{class:"resultGrid"},top.map(({r})=>h("div",{class:"score"},h("b",null,r.name),h("p",null,r.title),h("p",{class:"chosen"},r.description))))]:null,
-   h("div",{class:"actions sectionEnd"},btn("primary","reset","再开一个生涯"),btn("ghost","back","改最后一站")),
+   h("div",{class:"actions sectionEnd"},btn("primary","poster","晒战绩"),btn("ghost","reset","再开一个生涯"),btn("ghost","back","改最后一站")),
+   h("p",{class:"small posterStatus","aria-live":"polite"}),
    a.flagged.length?h("details",null,h("summary",null,"翻看这几笔旧账"),h("ol",null,a.flagged.map(({i,o,tags})=>li(nodes[i].title,o.text+" · "+tags.map(k=>badges[k].title).join("、"))))):null,
    h("details",null,h("summary",null,"看看我的每一步"),h("ol",null,nodes.map((n,i)=>li(n.title,n.options[picks[i]]?.text||special(i)?.text||"")))),
    h("details",null,h("summary",null,"展开 20 位球星路线与史料"),
@@ -145,6 +166,7 @@
   if(b.dataset.pick!==undefined){selected=Number(b.dataset.pick);draw();app.querySelector('[data-pick="'+selected+'"]')?.focus({preventScroll:true});return;}
   switch(b.dataset.act){
    case "recall": {const n=nodes[idx];if(special(idx)){selected=n.options.length;draw();app.querySelector('[data-act="recall"]')?.focus({preventScroll:true});}break;}
+   case "poster":openPoster();break;
    case "continue":case "start":resume();break;
    case "home":page="home";draw(true);break;
    case "reset":picks=[];finished=false;resume();break;
