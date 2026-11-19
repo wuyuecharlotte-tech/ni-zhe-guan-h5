@@ -161,7 +161,9 @@ window.GAME = (() => {
     ['有些晚上他就是队里最好的那个人。谁有好机会谁投，不用先看名字。','你给全队一个战术原则，但他还不知道遇到争议谁先说了算。','《记者问谁接班，教练：底角有个空位。》',1,[]],
     ['我们都能赢球。非要争谁带队，那我看看还有没有别的更衣室。','你保住了自己选队的权利，他也开始准备没有你的体系。','《交接仪式有两个麦克风和一张机票。》',-2,['exit','mic']]
   ]);
-  const insertAfter = new Map([[6,[credit,blame]],[8,[succession]]]);
+  // 「采访 / 接班」一站暂时下线（开发者要求先删掉）。恢复时把 [8,[succession]] 加回来，并同步恢复 ledger、extraAnchors 和 forum.js 里对应的一行。
+  void succession;
+  const insertAfter = new Map([[6,[credit,blame]]]);
   const oldToNew = [];
   const expanded = [];
   nodes.forEach((node,i)=>{
@@ -184,12 +186,12 @@ window.GAME = (() => {
   );
   // 话题球星多挂几个标志性选择（展开后的站序），让他们更容易被鉴定出来。
   const extraAnchors = {
-    '科比':[[6,3],[11,1]],
-    '乔丹':[[5,0],[8,0],[11,1]],
-    '库里':[[6,1],[9,0],[12,0]]
+    '科比':[[6,3]],
+    '乔丹':[[5,0],[8,0]],
+    '库里':[[6,1],[9,0],[11,0]]
   };
   routes.forEach(route=>{ const k=Object.keys(extraAnchors).find(n=>route.name.includes(n)); if(k) route.anchors.push(...extraAnchors[k]); });
-  // 非詹姆斯向的旧账标签（按展开后的 15 站、每站 4 个选项）：不同打法翻出不同的旧账。
+  // 非詹姆斯向的旧账标签（按展开后的 14 站、每站 4 个选项）：不同打法翻出不同的旧账。
   const ledger = [
     [[],[],[],['quiet']],
     [['range'],['quiet'],[],['solo']],
@@ -202,7 +204,6 @@ window.GAME = (() => {
     [[],[],[],[]],
     [['loyal'],[],['ride'],[]],
     [[],[],['quiet'],['mentor']],
-    [['mentor'],['solo'],[],[]],
     [['mentor'],['rest'],[],[]],
     [['nice'],['nice'],[],[]],
     [[],['loyal'],['quiet'],['mentor']]

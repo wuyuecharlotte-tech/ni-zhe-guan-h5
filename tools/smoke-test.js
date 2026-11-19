@@ -53,7 +53,7 @@ function mockSdk(mode) {
   await pg.reload(); await pg.click('[data-act=continue]');
   check('刷新后结局还在', (await pg.textContent('h1')) === '詹姆斯 100%');
   await pg.click('[data-act=reset]');
-  for (const p of [1,2,0,3,1,2,'r',1,1,3,1,'r']) {
+  for (const p of [1,2,0,3,1,2,'r']) {
     if (p === 'r') { await pg.click('[data-act=recall]'); check('★ 隐藏选项带论坛', await pg.$('.forumThread')); }
     else await pg.click(`[data-pick="${p}"]`);
     await pg.click('[data-act=next]');

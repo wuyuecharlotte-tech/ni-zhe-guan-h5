@@ -64,7 +64,7 @@
   const relation=n.relationship&&trustAt(idx)>=3?"他没让公关先审问题，自己拖了把椅子坐到你旁边。":n.relationship&&trustAt(idx)<=-2?"他听见记者提到自己，没像以前那样留下来等你。":"";
   const locker=choice&&n.relationship?(recalled?"他接过话筒，没有照公关写的念。":choice.trust>0?"散场后，他留了下来，愿意和你再聊两句。":choice.trust<0?"他没当场接话。下次战术会上，你得先把今天这句话讲清楚。":"他听完点了下头，等回更衣室再聊。"):"";
   const skill=lastSkill(idx);
-  const chapterArt=n.relationship||idx===13?["press","赛后的采访席与麦克风"]:idx===0?["arena","球馆入场通道"]:([4,6,10].includes(idx)?["court","球场上正要出手的球员"]:null);
+  const chapterArt=n.relationship||n.phase.includes("历史评价")?["press","赛后的采访席与麦克风"]:idx===0?["arena","球馆入场通道"]:([4,6,10].includes(idx)?["court","球场上正要出手的球员"]:null);
   const choiceBtn=(i,letter,text,pressed,extra)=>h("button",{class:"choice","aria-pressed":String(pressed),...extra},h("span",{class:"letter"},letter),h("span",null,text));
   return h("div",{class:"play"},
    h("section",{class:"card"},
@@ -154,7 +154,7 @@
 
    const res=await window.PLATFORM.share({blob,
     title:"我的生涯成分："+data.heading+"｜你这冠算不算？",
-    content:"我在《你这冠算不算？》打完了 15 站生涯，成分鉴定："+(data.mixText||"自成一派")+"。你的生涯，这冠算不算？",
+    content:"我在《你这冠算不算？》打完了 "+nodes.length+" 站生涯，成分鉴定："+(data.mixText||"自成一派")+"。你的生涯，这冠算不算？",
     onStage:k=>{tip.textContent=stages[k]||"";}});
    tip.textContent=res.msg; postBtn.disabled=false;
   });
@@ -167,12 +167,12 @@
   const {exact,mix,other}=getResult(),a=audit();
   const heading=mix.length?mix.slice(0,2).map(x=>shortName(x.r.name)+" "+x.pct+"%").join(" + "):"自成一派";
   const mixText=mix.map(x=>shortName(x.r.name)+" "+x.pct+"%").join("、")+(other?"、其他球星 "+other+"%":"");
-  const opener=exact?"真正的詹姆斯。从选秀夜打到最后一场发布会，连场外的几次关键决定都对上了。首冠只是把你送上论坛首页。":a.leaning?"鉴定备注：你这路子，有点詹。数据、话筒和下一份阵容名单，刚好都排在你最先要看的东西里。":mix.length?"按你这 15 站的选择，论坛给你做了一次成分鉴定。像谁，不等于复制了谁的冠军数。":"你的路线对不上任何一位球星原型。论坛没能给你贴一个整齐的标签。";
+  const opener=exact?"真正的詹姆斯。从选秀夜打到最后一场发布会，连场外的几次关键决定都对上了。首冠只是把你送上论坛首页。":a.leaning?"鉴定备注：你这路子，有点詹。数据、话筒和下一份阵容名单，刚好都排在你最先要看的东西里。":mix.length?"按你这 "+nodes.length+" 站的选择，论坛给你做了一次成分鉴定。像谁，不等于复制了谁的冠军数。":"你的路线对不上任何一位球星原型。论坛没能给你贴一个整齐的标签。";
   const ranked=a.dimensions.sort((x,y)=>a.sums[y]-a.sums[x]).slice(0,4); // 只翻最多的四笔
   const trust=trustAt(nodes.length),locker=trust>=3?"遇到问题，他愿意在同一个镜头里和你把话讲完。":trust<=-2?"球可以照传，但散场后他先走了。":"对外各说各的，回队里还能看同一份录像。";
   const hot=a.sums.stats>=2&&a.sums.mic>=2?"赛后问你今天怎么赢的，你说稍等，我把历史划成三个阶段给你讲。":a.sums.exit>=2&&a.sums.glory>=2?"主场字幕才打出下赛季再见，他已经在新城市采访里说我们了。":ranked.length?badges[ranked[0]].hot:"这回没刷出任何黑料。评论区决定延长讨论时间。";
   lastPoster={heading,opener,hot,
-   mixText,players:mix.map(({r,pct})=>({name:r.name,short:shortName(r.name),title:r.title,pct})),other,
+   count:nodes.length,mixText,players:mix.map(({r,pct})=>({name:r.name,short:shortName(r.name),title:r.title,pct})),other,
    badges:ranked.map(k=>({title:badges[k].title,count:a.sums[k],line:a.sums[k]===1?badges[k].one:badges[k].more}))};
   const li=(title,text)=>h("li",null,h("b",null,title),h("p",{class:"chosen"},text));
   return h("section",{class:"card result"},

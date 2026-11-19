@@ -134,7 +134,7 @@ window.POSTER = (() => {
     y += cardH + 54;
 
     ctx.fillStyle = 'rgba(255,255,255,.14)'; ctx.fillRect(PAD, y, W - PAD * 2, 2); y += 34;
-    text(ctx, '15 站生涯，你决定怎么打球，论坛决定怎么记住你。', PAD, y, 28, C.muted, 400);
+    text(ctx, (data.count || 14) + ' 站生涯，你决定怎么打球，论坛决定怎么记住你。', PAD, y, 28, C.muted, 400);
     text(ctx, '来虎扑打一遍你自己的生涯 →《你这冠算不算？》', PAD, y + 44, 30, C.gold, 700);
     // 按内容高度裁切，最矮为正方形
     const outH = Math.max(Math.ceil(y + 44 + 30 + PAD), W);
