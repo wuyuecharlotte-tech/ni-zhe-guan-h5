@@ -1,7 +1,7 @@
 {
   "activityId": "app_368013920e",
   "activityName": "未命名应用",
-  "status": "test",
+  "status": "implement",
   "confirmed": {
     "requirements": true,
     "plan": true,
@@ -509,7 +509,14 @@
       "from": "deploy",
       "to": "test",
       "note": ""
+    },
+    {
+      "at": "2026-11-19T22:26:47Z",
+      "action": "reject",
+      "from": "test",
+      "to": "implement",
+      "note": ""
     }
   ],
-  "updatedAt": "2026-11-19T22:23:47Z"
+  "updatedAt": "2026-11-19T22:26:47Z"
 }

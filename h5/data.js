@@ -166,7 +166,10 @@ window.GAME = (() => {
   const insertAfter = new Map([[6,[credit,blame]]]);
   const oldToNew = [];
   const expanded = [];
+  // 「谢幕」一站（基础第 12 站）暂时下线（开发者要求先删掉）。恢复时从 shelved 里去掉 11，并同步恢复 ledger 最后一行和 forum.js 里对应的一行。
+  const shelved = new Set([11]);
   nodes.forEach((node,i)=>{
+    if (shelved.has(i)) return;
     oldToNew[i] = expanded.length;
     expanded.push(node,...(insertAfter.get(i)||[]));
   });
@@ -174,7 +177,7 @@ window.GAME = (() => {
   routes.forEach((route,i)=>{
     route.anchors = i === 0
       ? expanded.map((node,j)=>[j,node.james])
-      : route.anchors.map(([j,choice])=>[oldToNew[j],choice]);
+      : route.anchors.filter(([j])=>oldToNew[j]!==undefined).map(([j,choice])=>[oldToNew[j],choice]);
   });
   sources.push(
     {text:"NBA 赛后访问：约基奇谈穆雷有些晚上就是队里第一人",site:"NBA 官网"},
@@ -191,7 +194,7 @@ window.GAME = (() => {
     '库里':[[6,1],[9,0],[11,0]]
   };
   routes.forEach(route=>{ const k=Object.keys(extraAnchors).find(n=>route.name.includes(n)); if(k) route.anchors.push(...extraAnchors[k]); });
-  // 非詹姆斯向的旧账标签（按展开后的 14 站、每站 4 个选项）：不同打法翻出不同的旧账。
+  // 非詹姆斯向的旧账标签（按展开后的 13 站、每站 4 个选项）：不同打法翻出不同的旧账。
   const ledger = [
     [[],[],[],['quiet']],
     [['range'],['quiet'],[],['solo']],
@@ -205,8 +208,7 @@ window.GAME = (() => {
     [['loyal'],[],['ride'],[]],
     [[],[],['quiet'],['mentor']],
     [['mentor'],['rest'],[],[]],
-    [['nice'],['nice'],[],[]],
-    [[],['loyal'],['quiet'],['mentor']]
+    [['nice'],['nice'],[],[]]
   ];
   ledger.forEach((row,i)=>row.forEach((tags,j)=>{ if(tags.length) expanded[i].options[j].ledger=tags; }));
   return {nodes:expanded,routes,sources};
