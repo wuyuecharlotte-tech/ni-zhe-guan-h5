@@ -5,7 +5,7 @@
   "summary": "未发现明显风险，发布安全门禁检查通过。",
   "package": {
     "packageId": "",
-    "archiveSha256": "5bf4cf78de886779fc16efd6ea60fd86d353a6e80788699c945094e2d0f710f1",
+    "archiveSha256": "3eae4ad2c2c23ee54ccebbe0c1f38c8af55f518e6a3c2605bc27371d679f3735",
     "fileCount": 10,
     "analyzedFileCount": 7,
     "skippedFileCount": 3
