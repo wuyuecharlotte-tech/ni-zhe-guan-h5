@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>WASM 压缩实验室</title><link rel="stylesheet" href="/style.css"><script src="/app.js" type="module"></script>
+</head>
+<body>
+<!-- THESIS: A file-to-evidence workbench for compressing WASM files.
+OWN-WORLD: Inherit wasm-lab's cool light surfaces, indigo actions, ruled measurement rows, system UI typography.
+STORY: Choose a real binary, compare lossless encodings, download and test native delivery.
+FIRST VIEWPORT: Source rail on left, wide measured results on right; action anchored under compression settings.
+FORM: Candidate 3, source-and-evidence split workbench; alternatives considered: wizard, single-column form, batch queue, comparison-first sheet. Seed edbcc136.
+FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, and DESIGN.md -->
+<header class="masthead"><a class="brand" href="/" aria-label="WASM 压缩实验室首页"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M5 9h22M5 16h16M5 23h10M23 20v8m-4-4 4 4 4-4"/></svg>WASM <span>压缩实验室</span></a><span class="runtime" id="runtime">连接 Node 服务…</span></header>
+<main>
+  <div class="intro"><div><h1>把 WASM 文件压得更小。</h1><p>上传现成文件，用 Node 实测压缩率，下载压缩结果用于你的项目。</p></div><span class="local-note">本机处理 · 无需源码</span></div>
+  <div class="workspace">
+    <aside class="source-panel">
+      <h2>选择 WASM 文件</h2>
+      <div id="upload-source"><label class="dropzone" id="dropzone" for="file-input"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 22V5m-6 6 6-6 6 6M5 20v7h22v-7"/></svg><strong>选择或拖入 .wasm 文件</strong><span>不设文件大小上限</span><input id="file-input" type="file" accept=".wasm,application/wasm"></label><p id="file-info" class="help">文件只发送到本机 Node 服务。</p></div>
+      <fieldset><legend>压缩算法</legend><label class="check"><input type="checkbox" name="codec" value="br" checked><span>Brotli <small>静态资源优先</small></span></label><label class="check"><input type="checkbox" name="codec" value="gzip" checked><span>gzip <small>兼容回退</small></span></label><label class="check"><input type="checkbox" name="codec" value="zstd" checked><span>Zstandard <small>速度与体积兼顾</small></span></label></fieldset>
+      <label for="preset">压缩档位</label><select id="preset"><option value="fast">快速对比 · br 5 / gzip 6 / zstd 3</option><option value="archive">最小体积 · br 11 / gzip 9 / zstd 19</option></select><p class="help">最小体积档更耗时，适合构建时预压缩。</p>
+      <button id="compress" class="primary" disabled><span>开始压缩对比</span><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 10h14m-5-5 5 5-5 5"/></svg></button>
+      <p id="status" class="status" role="status" aria-live="polite">选择或拖入 .wasm 文件后即可开始。</p>
+      <p class="retention">结果保留 30 分钟，最多 6 个任务。重启服务可清空。</p>
+    </aside>
+    <div class="evidence">
+      <section aria-labelledby="results-heading">
+        <div class="section-heading"><h2 id="results-heading">压缩结果</h2><span id="result-state" class="tag">等待运行</span></div>
+        <div id="empty" class="empty"><svg viewBox="0 0 160 72" aria-hidden="true"><rect x="1" y="4" width="158" height="12" rx="2"/><rect x="1" y="30" width="98" height="12" rx="2"/><rect x="1" y="56" width="62" height="12" rx="2"/></svg><h3>同一个文件，三种压缩方式。</h3><p>上传 WASM 文件，选择算法后开始压缩对比。</p><p class="help">所有数字来自本次实际运行，不使用预设数据。</p></div>
+        <div id="results" hidden><div class="file-heading"><div><h3 id="result-name"></h3><p id="original-size"></p></div><button id="export" class="secondary" disabled>导出 JSON</button></div><div id="chart" class="chart" aria-label="文件体积对比"></div><div class="table-wrap"><table><caption class="sr-only">压缩体积、压缩和解压耗时及下载结果</caption><thead><tr><th>编码 / 级别</th><th>体积</th><th>减少</th><th>压缩</th><th>解压</th><th>文件</th></tr></thead><tbody id="result-rows"></tbody></table></div><p class="verification" id="verification"></p><details><summary>SHA-256 与测量说明</summary><code id="sha"></code><p class="help">压缩后在 Node 回解，逐字节及 SHA-256 双重校验。耗时为单次本机墙钟时间，不含上传和校验；解压耗时不代表浏览器速度。体积使用 KiB / MiB。</p></details></div>
+      </section>
+      <details class="notes"><summary>压缩文件如何用于你的项目？</summary><div class="notes-body">
+        <p><strong>在平台中使用：</strong>直接使用压缩后的文件即可，平台会自动处理加载所需的配置，无需额外操作。</p>
+        <p><strong>本地开发：</strong>同样使用压缩后的文件，按下面的示例配置本地开发服务后，就能直接引用压缩文件的地址，无需手动解压。</p>
+        <p><strong>Vite 配置示例：</strong>将 module.wasm.br 放入 public 目录，在现有 vite.config.js / vite.config.ts 的 plugins 中合并以下插件，保留项目其他配置，然后重启开发服务。示例同时支持 module.wasm.gz 和 module.wasm.zst；文件名不同时，同步修改匹配规则和读取路径。</p>
+        <pre aria-label="Vite 压缩 WASM 开发服务配置"><code>import { readFile } from 'node:fs/promises';
+import { join } from 'node:path';
+import { defineConfig } from 'vite';
+
+export default defineConfig({
+  plugins: [{
+    name: 'serve-compressed-wasm',
+    configureServer(server) {
+      server.middlewares.use(async (req, res, next) =&gt; {
+        const path = new URL(req.url || '/', 'http://localhost').pathname;
+        const match = /^\/module\.wasm\.(br|gz|zst)$/.exec(path);
+        if (!match || !['GET', 'HEAD'].includes(req.method || 'GET')) return next();
+
+        try {
+          const bytes = await readFile(join(
+            server.config.publicDir, `module.wasm.${match[1]}`
+          ));
+          const encoding = match[1] === 'gz' ? 'gzip'
+            : match[1] === 'zst' ? 'zstd' : 'br';
+          res.setHeader('Content-Type', 'application/wasm');
+          res.setHeader('Content-Encoding', encoding);
+          res.setHeader('Content-Length', bytes.length);
+          res.setHeader('Cache-Control', 'no-store');
+          res.end(req.method === 'HEAD' ? undefined : bytes);
+        } catch (error) {
+          next(error);
+        }
+      });
+    },
+  }],
+});</code></pre>
+        <p><strong>加载示例：</strong>直接请求带压缩后缀的地址，浏览器会根据响应头解压，再交给 WebAssembly。下面的 imports 沿用项目已有的模块导入配置；如使用引擎或工具链生成的 JS 加载器，只需将它的 WASM 路径指向 /module.wasm.br，保留原有初始化方式和配套 JS 文件。</p>
+        <pre aria-label="加载压缩 WASM 示例"><code>// imports 使用项目已有配置，不需要添加解压逻辑。
+const { instance } = await WebAssembly.instantiateStreaming(
+  fetch('/module.wasm.br'),
+  imports
+);
+// 继续通过 instance.exports 使用模块。</code></pre>
+        <p><strong>如何确认配置生效：</strong>打开浏览器 Network，检查压缩文件请求返回 200，Content-Type 为 application/wasm，Content-Encoding 与文件格式一致（.br → br、.gz → gzip、.zst → zstd）。浏览器需支持对应编码；zstd 不兼容时可改用 gzip 压缩地址。示例按不同地址提供不同编码，无需协商；若同一地址按 Accept-Encoding 返回不同版本，还需设置 Vary: Accept-Encoding。以上插件仅用于 Vite 开发服务，vite preview 或其他静态服务需单独配置。</p>
+      </div></details>
+    </div>
+  </div>
+</main><footer><span>WASM Compression Lab</span><span>Node 原生 zlib · 无 npm 运行依赖 · 本地演示</span></footer>
+</body></html>

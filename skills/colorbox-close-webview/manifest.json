@@ -1,0 +1,33 @@
+{
+  "id": "colorbox-close-webview",
+  "name": "关闭当前活动页",
+  "description": "用户点击完成、返回或关闭按钮后，关闭虎扑 App 内的当前活动页。",
+  "category": "设备与分享",
+  "categories": [
+    "设备与分享"
+  ],
+  "icon": "globe",
+  "details": {
+    "capabilities": [
+      "在虎扑 App 内关闭当前活动页面。"
+    ],
+    "scenarios": [
+      "报名完成、任务结束、退出活动、关闭结果页。"
+    ],
+    "usageTips": [
+      "说明何时提供关闭入口，例如提交成功后显示“完成并返回”按钮；由用户主动点击后关闭页面。"
+    ]
+  },
+  "content": "---\nname: closeWebview\ndescription: 在虎扑 App 内关闭当前活动页 WebView。适用于提交成功、任务完成、用户点击关闭按钮等明确交互后的页面收起场景。\n---\n\n# Usage\n\n- JS Path: `window.ColorboxAI.closeWebview(params)`\n\n# Constraints\n\n- 必须使用 window.ColorboxAI.closeWebview({ channel: \"bridge\" })，严禁直接调用 window.HupuBridge、webkit.messageHandlers、androidBridge 或自行拼接 Bridge 参数\n- 底层固定调用 hupu.ui.pageclose，并通过 Shaper AI shell bridge 代理链路执行\n- 只允许在用户点击关闭、完成、返回等明确交互后调用，禁止页面加载后自动关闭 WebView\n- 调用前如果需要埋点，必须先调用 window.ColorboxAI.track(params)，再调用 closeWebview\n- 非 App / 无 Bridge 环境可能不会真正关闭页面，业务代码需做好 Web 预览环境下的降级表现\n- 必须根据返回的 code 判断是否成功，若 code 不等于 200，必须使用返回的 message 对用户进行友好提示（如 Toast 或弹窗）。\n\n# Parameters\n\n| 参数名 | 类型 | 是否必填 | 说明 |\n| --- | --- | --- | --- |\n| channel | string | 否 | 调用通道，固定使用 bridge。默认值为 bridge，可显式传入 \"bridge\"。 |\n\n# Returns\n\n- Type: `Promise<Response>`\n\n### Response Properties\n\n| 属性名 | 类型 | 是否必填 | 说明 |\n| --- | --- | --- | --- |\n| code | number | 是 | 状态码，200 表示已发起关闭 WebView 的 Bridge 调用 |\n| message | string | 是 | 提示信息 |\n| data | object | 否 | Bridge 调用信息 |\n| data.channel | string | 否 | 实际调用通道，固定为 bridge |\n| data.method | string | 否 | 底层 Native Bridge 方法名，固定为 hupu.ui.pageclose |\n| data.bridgeResult | object | 否 | 客户端 Bridge 回调结果；WebView 关闭成功时可能不会返回有效值 |\n\n# Examples\n\n```javascript\nwindow.ColorboxAI.closeWebview({ channel: \"bridge\" }).then(res => { if (res.code !== 200) { console.warn(res.message); } })\n```\n\n```javascript\nfunction handleDoneClick() { window.ColorboxAI.track({ act: \"click\", blk: \"BMC001\", pos: \"T1\" }); window.ColorboxAI.closeWebview({ channel: \"bridge\" }); }\n```",
+  "files": [
+    {
+      "path": "SKILL.md",
+      "content": "---\nname: closeWebview\ndescription: 在虎扑 App 内关闭当前活动页 WebView。适用于提交成功、任务完成、用户点击关闭按钮等明确交互后的页面收起场景。\n---\n\n# Usage\n\n- JS Path: `window.ColorboxAI.closeWebview(params)`\n\n# Constraints\n\n- 必须使用 window.ColorboxAI.closeWebview({ channel: \"bridge\" })，严禁直接调用 window.HupuBridge、webkit.messageHandlers、androidBridge 或自行拼接 Bridge 参数\n- 底层固定调用 hupu.ui.pageclose，并通过 Shaper AI shell bridge 代理链路执行\n- 只允许在用户点击关闭、完成、返回等明确交互后调用，禁止页面加载后自动关闭 WebView\n- 调用前如果需要埋点，必须先调用 window.ColorboxAI.track(params)，再调用 closeWebview\n- 非 App / 无 Bridge 环境可能不会真正关闭页面，业务代码需做好 Web 预览环境下的降级表现\n- 必须根据返回的 code 判断是否成功，若 code 不等于 200，必须使用返回的 message 对用户进行友好提示（如 Toast 或弹窗）。\n\n# Parameters\n\n| 参数名 | 类型 | 是否必填 | 说明 |\n| --- | --- | --- | --- |\n| channel | string | 否 | 调用通道，固定使用 bridge。默认值为 bridge，可显式传入 \"bridge\"。 |\n\n# Returns\n\n- Type: `Promise<Response>`\n\n### Response Properties\n\n| 属性名 | 类型 | 是否必填 | 说明 |\n| --- | --- | --- | --- |\n| code | number | 是 | 状态码，200 表示已发起关闭 WebView 的 Bridge 调用 |\n| message | string | 是 | 提示信息 |\n| data | object | 否 | Bridge 调用信息 |\n| data.channel | string | 否 | 实际调用通道，固定为 bridge |\n| data.method | string | 否 | 底层 Native Bridge 方法名，固定为 hupu.ui.pageclose |\n| data.bridgeResult | object | 否 | 客户端 Bridge 回调结果；WebView 关闭成功时可能不会返回有效值 |\n\n# Examples\n\n```javascript\nwindow.ColorboxAI.closeWebview({ channel: \"bridge\" }).then(res => { if (res.code !== 200) { console.warn(res.message); } })\n```\n\n```javascript\nfunction handleDoneClick() { window.ColorboxAI.track({ act: \"click\", blk: \"BMC001\", pos: \"T1\" }); window.ColorboxAI.closeWebview({ channel: \"bridge\" }); }\n```"
+    }
+  ],
+  "manifest": {
+    "capability": "closeWebview",
+    "source": "skill-package",
+    "version": 1
+  }
+}

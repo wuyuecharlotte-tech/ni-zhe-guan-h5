@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://shaper.hupu.io/timeflow/schema/change-delivery-result.schema.json",
+  "title": "ChangeDeliveryResult",
+  "description": "Fixed callback result schema. APPLIED confirms the complete change set was idempotently applied.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["status"],
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": ["APPLIED", "ACCEPTED", "RETRYABLE", "REJECTED"]
+    },
+    "appliedDigest": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "resultRef": {"type": ["string", "null"], "maxLength": 512},
+    "retryAfterMs": {"type": ["integer", "null"], "minimum": 0},
+    "code": {"type": ["string", "null"], "maxLength": 128},
+    "safeMessage": {"type": ["string", "null"], "maxLength": 512}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"status": {"const": "APPLIED"}}},
+      "then": {"required": ["appliedDigest"]}
+    },
+    {
+      "if": {"properties": {"status": {"enum": ["RETRYABLE", "REJECTED"]}}},
+      "then": {"required": ["code"]}
+    }
+  ]
+}

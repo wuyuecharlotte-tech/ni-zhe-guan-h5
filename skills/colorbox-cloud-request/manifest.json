@@ -1,0 +1,34 @@
+{
+  "id": "colorbox-cloud-request",
+  "name": "云服务",
+  "description": "支持保存用户信息、记录游戏成绩、统计投票和发放任务奖励等在线功能。",
+  "category": "云服务",
+  "categories": [
+    "云服务"
+  ],
+  "icon": "database",
+  "details": {
+    "capabilities": [
+      "保存和查看用户资料、参与记录和游戏成绩。",
+      "按活动要求统计排名、参与次数和奖励。"
+    ],
+    "scenarios": [
+      "活动报名、投票评选、排行榜、任务奖励等在线功能。"
+    ],
+    "usageTips": [
+      "说明希望用户完成什么，例如每天能投几票、达到多少分能领取奖励。"
+    ]
+  },
+  "content": "---\nname: cloud-request\ndescription: 使用 ColorboxAI 调用旧版 CloudBase 活动接口。\n---\n\n# CloudBase 活动请求\n\n本技能用于下载技能包的旧项目，保留原有 SDK 和环境绑定，不迁移到 Shaper CLI/MCP。\n\n- 使用 `window.ColorboxAI.cloud.request`，不要求旧 SDK 提供 `ShaperAI`。\n- `url` 填写已绑定环境的完整接口地址；方法支持 GET、POST，默认 GET。\n- 需要登录的接口传 `auth: true` 和原 `envId`，由 SDK 完成登录和 Bearer 管理。\n- 只使用 `url`、`method`、`headers`、`data`、`envId`、`auth`；不传新版 `path` 参数。\n- 不在请求体中自报 puid，不手写 Token，不切换或重建已有云环境。\n- 开通、部署仍遵循 act-cloudbase 的用户确认要求。\n\n```js\nawait window.ColorboxAI.cloud.request({\n  url: window.ACTIVITY_API_BASE + '/progress',\n  method: 'POST',\n  data: { score: 100 },\n  envId: window.ACTIVITY_ENV_ID,\n  auth: true\n});\n```\n\n返回 `{ statusCode, code, message, data }`。先检查返回状态，再使用业务数据。\n",
+  "files": [
+    {
+      "path": "SKILL.md",
+      "content": "---\nname: cloud-request\ndescription: 使用 ColorboxAI 调用旧版 CloudBase 活动接口。\n---\n\n# CloudBase 活动请求\n\n本技能用于下载技能包的旧项目，保留原有 SDK 和环境绑定，不迁移到 Shaper CLI/MCP。\n\n- 使用 `window.ColorboxAI.cloud.request`，不要求旧 SDK 提供 `ShaperAI`。\n- `url` 填写已绑定环境的完整接口地址；方法支持 GET、POST，默认 GET。\n- 需要登录的接口传 `auth: true` 和原 `envId`，由 SDK 完成登录和 Bearer 管理。\n- 只使用 `url`、`method`、`headers`、`data`、`envId`、`auth`；不传新版 `path` 参数。\n- 不在请求体中自报 puid，不手写 Token，不切换或重建已有云环境。\n- 开通、部署仍遵循 act-cloudbase 的用户确认要求。\n\n```js\nawait window.ColorboxAI.cloud.request({\n  url: window.ACTIVITY_API_BASE + '/progress',\n  method: 'POST',\n  data: { score: 100 },\n  envId: window.ACTIVITY_ENV_ID,\n  auth: true\n});\n```\n\n返回 `{ statusCode, code, message, data }`。先检查返回状态，再使用业务数据。\n"
+    }
+  ],
+  "manifest": {
+    "capability": "cloud-request",
+    "source": "skill-package",
+    "version": 1
+  }
+}

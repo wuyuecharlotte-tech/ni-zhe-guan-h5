@@ -1,0 +1,64 @@
+{
+  "destination": "《你这冠算不算？》NBA 生涯分支文字游戏上架虎扑：15 站选择、虚构论坛、生涯结局，结局可生成海报晒帖",
+  "decisions": [
+    {
+      "id": "D1",
+      "question": "晒战绩海报上放哪些内容？",
+      "options": {
+        "A": "结局称号 + 最像的球星 + 旧账徽章 + 一句论坛热评（推荐）",
+        "B": "只放结局称号和最像的球星",
+        "C": "在 A 基础上再列出 15 站每一步的选择"
+      },
+      "recommend": "A",
+      "depends_on": [],
+      "status": "resolved",
+      "presented": true,
+      "choice": "A",
+      "note": ""
+    },
+    {
+      "id": "D2",
+      "question": "游戏对外叫什么名字？",
+      "options": {
+        "A": "你这冠算不算？（推荐）",
+        "B": "冠军审判庭",
+        "C": "另起名字"
+      },
+      "recommend": "A",
+      "depends_on": [],
+      "status": "resolved",
+      "presented": true,
+      "choice": "A",
+      "note": ""
+    },
+    {
+      "id": "D3",
+      "question": "晒战绩入口放在哪？",
+      "options": {
+        "A": "只在生涯结局页（推荐）",
+        "B": "结局页 + 每一站的论坛楼也能晒"
+      },
+      "recommend": "A",
+      "depends_on": [],
+      "status": "resolved",
+      "presented": true,
+      "choice": "A",
+      "note": ""
+    },
+    {
+      "id": "D4",
+      "kind": "deployment",
+      "question": "游戏进度和结局要不要保存？存在哪？",
+      "options": {
+        "A": "云端保存",
+        "B": "本地保存"
+      },
+      "recommend": "B",
+      "depends_on": [
+        "D1"
+      ],
+      "status": "deferred",
+      "note": "技能包含云服务能力；需求轮不提问，plan 静态预览确认后再引导式确认"
+    }
+  ]
+}

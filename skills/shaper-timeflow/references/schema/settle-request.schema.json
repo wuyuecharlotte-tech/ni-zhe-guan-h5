@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://shaper.hupu.io/timeflow/schema/settle-request.schema.json",
+  "title": "SettleRequest",
+  "description": "结算触发请求（design §10.4）。from 仅用于与平台权威区间比对，绝不能决定区间。",
+  "type": "object",
+  "additionalProperties": true,
+  "required": ["trigger"],
+  "properties": {
+    "trigger": {
+      "type": "string",
+      "enum": ["login", "foreground", "due", "event", "cross_day"]
+    },
+    "clientAt": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "from": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "ruleVersionHint": {
+      "type": "integer",
+      "minimum": 1
+    }
+  }
+}

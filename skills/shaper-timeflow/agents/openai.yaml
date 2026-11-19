@@ -1,0 +1,4 @@
+interface:
+  display_name: "离线成长"
+  short_description: "为放置养成、体力恢复、作物成熟和长离线补算结算收益"
+  default_prompt: "用 $shaper-timeflow 为放置养成玩法补算玩家离线期间的资源收益。"

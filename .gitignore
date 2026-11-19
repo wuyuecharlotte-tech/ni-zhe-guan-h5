@@ -1,5 +1,8 @@
-credentials.json
-node_modules/
-.venv/
 *.pyc
 .DS_Store
+.material-library/
+.venv/
+credentials.json
+debug-context.json
+debug-logs.json
+node_modules/

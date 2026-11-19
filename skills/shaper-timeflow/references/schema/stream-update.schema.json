@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://shaper.hupu.io/timeflow/schema/stream-update.schema.json",
+  "title": "StreamUpdate",
+  "description": "单条流状态上报（design §10.4）。字符串十进制避免跨语言浮点漂移。",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "streamKey",
+    "value",
+    "expectedVersion",
+    "requestId"
+  ],
+  "properties": {
+    "streamKey": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "displayName": {
+      "type": "string",
+      "description": "可选展示名称；空白值保留原名，不参与业务身份",
+      "maxLength": 128
+    },
+    "value": {
+      "$ref": "#/$defs/decimalUnsigned"
+    },
+    "rate": {
+      "$ref": "#/$defs/decimalSigned"
+    },
+    "phaseIndex": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "仅用于创建实例；已有实例的 phase 由平台结算或显式 transition 单调推进，不能回退"
+    },
+    "capacity": {
+      "oneOf": [
+        {"$ref": "#/$defs/decimalUnsigned"},
+        {"type": "null"}
+      ]
+    },
+    "expectedVersion": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "requestId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64
+    }
+  },
+  "$defs": {
+    "decimalUnsigned": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]{1,18})?$"
+    },
+    "decimalSigned": {
+      "type": "string",
+      "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]{1,18})?$"
+    }
+  }
+}

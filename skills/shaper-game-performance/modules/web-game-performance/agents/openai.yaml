@@ -1,0 +1,3 @@
+interface:
+  display_name: "Web 游戏性能优化"
+  short_description: "面向 2D、3D Web 游戏的实测诊断、细分优化方案与复测验收"

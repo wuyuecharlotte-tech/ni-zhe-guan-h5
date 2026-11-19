@@ -1,0 +1,25 @@
+{
+  "activityId": "app_368013920e",
+  "activityName": "未命名应用",
+  "status": "requirements",
+  "confirmed": {
+    "requirements": false,
+    "plan": false,
+    "implement": false,
+    "security-review": false,
+    "deploy": false,
+    "test": false,
+    "deliver": false,
+    "done": false
+  },
+  "history": [
+    {
+      "at": "2026-11-19T19:57:28Z",
+      "action": "init",
+      "from": null,
+      "to": "requirements",
+      "note": "初始化任务状态（链：requirements → plan → implement → security-review → deploy → test → deliver → done）"
+    }
+  ],
+  "updatedAt": "2026-11-19T19:57:28Z"
+}

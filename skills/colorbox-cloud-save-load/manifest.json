@@ -1,0 +1,34 @@
+{
+  "id": "colorbox-cloud-save-load",
+  "name": "读取云存档",
+  "description": "从指定云存档位恢复用户进度、草稿、选择或个人设置；编号为 1–5，成功时返回字符串，无存档时返回 null。",
+  "category": "存储与上传",
+  "categories": [
+    "存储与上传"
+  ],
+  "icon": "image",
+  "details": {
+    "capabilities": [
+      "读取云存档：从指定云存档位恢复用户进度、草稿、选择或个人设置；编号为 1–5，成功时返回字符串，无存档时返回 null。",
+      "提供数据保存或文件传输能力，为后续恢复状态、访问文件提供支持。"
+    ],
+    "scenarios": [
+      "页面需要保留使用状态，或让业务流程中的文件可被后续访问。"
+    ],
+    "usageTips": [
+      "根据需求选择本地存储、云存档或文件上传，并确认对应能力的保存范围与使用限制。"
+    ]
+  },
+  "content": "---\nname: cloudSave-load\ndescription: 从指定云存档位恢复用户进度、草稿、选择或个人设置；编号为 1–5，成功时返回字符串，无存档时返回 null。\n---\n\n# Usage\n\n- JS Path: `window.ColorboxAI.cloudSave.load(params)`\n\n# Constraints\n\n- 新接入首选 save/load；已有 getValue/setValue 应用可继续使用原接口。新 slot 为 null 不代表旧 key 无数据，切换接口前按 cloud-save/SKILL.md 的迁移方案处理，不强制迁移\n- 先判断 code；只有 code === 200 且 data === null 才表示没有存档，空字符串是有效值。仅对业务保存的 JSON 做解析，捕获解析异常并校验所用字段的类型和范围，只提取白名单字段\n- 按需读取，不启动时全量读、不轮询、不随渲染或保存成功重复读；同一用户/应用/活动/存档位复用在途请求或页面内结果，显式刷新时重新读取；失败不缓存成无记录，缓存不等于云端最新值\n- 读取存档不要求启用自动保存，保存方式按实际功能选择；已启用自动保存且需要恢复时，成功读取、解析和校验前暂停自动写回。旧读取不能覆盖新编辑，写入成功后更新或失效缓存，写入前的旧读取不能回填。卸载或切换用户/应用/活动/存档位时清理相关缓存和任务，忽略旧结果\n- 读取、解析或校验失败时提示并保留用户编辑，不能按无记录处理或自动写回默认值；暂停该失败操作的自动提交，不由定时器或队列立即重发、不无限重试。存档分配、场景与失败处理见 cloud-save/SKILL.md\n- 升级后兼容已知旧字段，仅给兼容数据的缺省字段补默认值；不兼容格式保留原存档并提示，不自动覆盖。空字符串不会因业务清空变成 null；保存超时后的读取只确认当时可见值，不代表旧写入已结束，不覆盖新编辑。重置与旧存档处理见 cloud-save/SKILL.md\n\n# Parameters\n\n| 参数名 | 类型 | 是否必填 | 说明 |\n| --- | --- | --- | --- |\n| slot | integer | 是 | 存档编号，与保存时保持一致，只接受 1–5 的整数 |\n\n# Returns\n\n- Type: `Promise<Response>`\n\n### Response Properties\n\n| 属性名 | 类型 | 是否必填 | 说明 |\n| --- | --- | --- | --- |\n| code | number | 是 | SDK 状态码，成功为 200；参数或网络失败时为错误码 |\n| message | string | 是 | 结果说明 |\n| data | string / null | 是 | 存档字符串；没有记录时为 null |\n\n# Examples\n\n```javascript\nwindow.ColorboxAI.cloudSave.load({ slot: 1 }).then(res => { if (res.code !== 200) throw new Error(res.message || \"读取失败\"); if (res.data === null) console.log(\"暂无存档\"); else console.log(res.data); }).catch(error => console.warn(error.message));\n```",
+  "files": [
+    {
+      "path": "SKILL.md",
+      "content": "---\nname: cloudSave-load\ndescription: 从指定云存档位恢复用户进度、草稿、选择或个人设置；编号为 1–5，成功时返回字符串，无存档时返回 null。\n---\n\n# Usage\n\n- JS Path: `window.ColorboxAI.cloudSave.load(params)`\n\n# Constraints\n\n- 新接入首选 save/load；已有 getValue/setValue 应用可继续使用原接口。新 slot 为 null 不代表旧 key 无数据，切换接口前按 cloud-save/SKILL.md 的迁移方案处理，不强制迁移\n- 先判断 code；只有 code === 200 且 data === null 才表示没有存档，空字符串是有效值。仅对业务保存的 JSON 做解析，捕获解析异常并校验所用字段的类型和范围，只提取白名单字段\n- 按需读取，不启动时全量读、不轮询、不随渲染或保存成功重复读；同一用户/应用/活动/存档位复用在途请求或页面内结果，显式刷新时重新读取；失败不缓存成无记录，缓存不等于云端最新值\n- 读取存档不要求启用自动保存，保存方式按实际功能选择；已启用自动保存且需要恢复时，成功读取、解析和校验前暂停自动写回。旧读取不能覆盖新编辑，写入成功后更新或失效缓存，写入前的旧读取不能回填。卸载或切换用户/应用/活动/存档位时清理相关缓存和任务，忽略旧结果\n- 读取、解析或校验失败时提示并保留用户编辑，不能按无记录处理或自动写回默认值；暂停该失败操作的自动提交，不由定时器或队列立即重发、不无限重试。存档分配、场景与失败处理见 cloud-save/SKILL.md\n- 升级后兼容已知旧字段，仅给兼容数据的缺省字段补默认值；不兼容格式保留原存档并提示，不自动覆盖。空字符串不会因业务清空变成 null；保存超时后的读取只确认当时可见值，不代表旧写入已结束，不覆盖新编辑。重置与旧存档处理见 cloud-save/SKILL.md\n\n# Parameters\n\n| 参数名 | 类型 | 是否必填 | 说明 |\n| --- | --- | --- | --- |\n| slot | integer | 是 | 存档编号，与保存时保持一致，只接受 1–5 的整数 |\n\n# Returns\n\n- Type: `Promise<Response>`\n\n### Response Properties\n\n| 属性名 | 类型 | 是否必填 | 说明 |\n| --- | --- | --- | --- |\n| code | number | 是 | SDK 状态码，成功为 200；参数或网络失败时为错误码 |\n| message | string | 是 | 结果说明 |\n| data | string / null | 是 | 存档字符串；没有记录时为 null |\n\n# Examples\n\n```javascript\nwindow.ColorboxAI.cloudSave.load({ slot: 1 }).then(res => { if (res.code !== 200) throw new Error(res.message || \"读取失败\"); if (res.data === null) console.log(\"暂无存档\"); else console.log(res.data); }).catch(error => console.warn(error.message));\n```"
+    }
+  ],
+  "manifest": {
+    "capability": "cloudSave-load",
+    "source": "skill-package",
+    "version": 1
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "id": "colorbox-fullscreen-safe-top",
+  "name": "全屏顶部安全适配",
+  "description": "获取全屏 H5 顶部安全距离，适配自定义头部。",
+  "category": "应用基础",
+  "categories": [
+    "应用基础"
+  ],
+  "icon": "bluetooth",
+  "details": {
+    "capabilities": [
+      "全屏顶部安全适配：获取全屏 H5 顶部安全距离，适配自定义头部。"
+    ],
+    "scenarios": [
+      "全屏活动页需要避让状态栏或刘海的自定义头部、顶部固定按钮和页面内容。"
+    ],
+    "usageTips": [
+      "页面初始化后调用，将返回的 CSS px 用于顶部间距"
+    ]
+  },
+  "content": "---\nname: fullscreen-safe-top\ndescription: 获取全屏活动 H5 的顶部安全距离，用于自定义头部、顶部固定按钮和页面内容避让状态栏或刘海。\n---\n\n# Usage\n\n- JS Path: `window.ColorboxAI.getFullscreenSafeTop()`\n\n# Constraints\n\n- 同步调用 window.ColorboxAI.getFullscreenSafeTop()，无需参数，直接返回数字，单位为 CSS px，可直接用于 height、padding-top 或 top。\n- 游戏启动时按固定全屏页面使用；仅在宿主未预留顶部空间时应用，同一内容只避让一次。\n- 返回值可直接使用，无需自行计算或换算单位；无法获取安全距离时返回 0。\n- 在 SDK 就绪后调用；游戏启动时读取一次即可，不要高频轮询。\n\n# Parameters\n\n| 参数名 | 类型 | 是否必填 | 说明 |\n| --- | --- | --- | --- |\n\n# Returns\n\n- Type: `number`\n\n顶部安全距离，单位 CSS px，非负数；无法获取时返回 0。\n\n# Examples\n\n```javascript\nconst height = window.ColorboxAI.getFullscreenSafeTop();\ndocument.querySelector(\".header\").style.height = `${height}px`;\n```",
+  "files": [
+    {
+      "path": "SKILL.md",
+      "content": "---\nname: fullscreen-safe-top\ndescription: 获取全屏活动 H5 的顶部安全距离，用于自定义头部、顶部固定按钮和页面内容避让状态栏或刘海。\n---\n\n# Usage\n\n- JS Path: `window.ColorboxAI.getFullscreenSafeTop()`\n\n# Constraints\n\n- 同步调用 window.ColorboxAI.getFullscreenSafeTop()，无需参数，直接返回数字，单位为 CSS px，可直接用于 height、padding-top 或 top。\n- 游戏启动时按固定全屏页面使用；仅在宿主未预留顶部空间时应用，同一内容只避让一次。\n- 返回值可直接使用，无需自行计算或换算单位；无法获取安全距离时返回 0。\n- 在 SDK 就绪后调用；游戏启动时读取一次即可，不要高频轮询。\n\n# Parameters\n\n| 参数名 | 类型 | 是否必填 | 说明 |\n| --- | --- | --- | --- |\n\n# Returns\n\n- Type: `number`\n\n顶部安全距离，单位 CSS px，非负数；无法获取时返回 0。\n\n# Examples\n\n```javascript\nconst height = window.ColorboxAI.getFullscreenSafeTop();\ndocument.querySelector(\".header\").style.height = `${height}px`;\n```"
+    }
+  ],
+  "manifest": {
+    "capability": "fullscreen-safe-top",
+    "source": "skill-package",
+    "version": 1
+  }
+}

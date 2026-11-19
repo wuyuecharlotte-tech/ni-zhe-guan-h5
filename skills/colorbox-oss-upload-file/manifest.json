@@ -1,0 +1,34 @@
+{
+  "id": "colorbox-oss-upload-file",
+  "name": "图片与文件上传",
+  "description": "将图片和文件保存到云端，供作品提交、内容发布和分享使用。",
+  "category": "存储与上传",
+  "categories": [
+    "存储与上传"
+  ],
+  "icon": "hard-drive-upload",
+  "details": {
+    "capabilities": [
+      "上传用户提供或页面生成的图片和文件。",
+      "获得可访问的文件链接，供后续提交、发布或分享使用。"
+    ],
+    "scenarios": [
+      "作品征集、晒图投稿、结果海报上传、文件提交。"
+    ],
+    "usageTips": [
+      "说明需要上传的内容、允许的文件类型和上传后的用途；单个文件不超过 10MB。"
+    ]
+  },
+  "content": "---\nname: oss-uploadFile\ndescription: 支持在活动页内通过拍照、相册选择或合成二进制，将文件或图片直传至 Hupu OSS 并获取可用 CDN 地址。适用于用户上传头像、活动晒图、截图分享及二进制文件存证。\n---\n\n# Usage\n\n- JS Path: `window.ColorboxAI.oss.uploadFile(params)`\n\n# Constraints\n\n- 必须且仅允许使用 window.ColorboxAI.oss.uploadFile(params) 接口，严禁在业务端直接引入 ali-oss 或手写上传逻辑\n- 入参 file 必须为标准的 HTML5 File 或 Blob 对象\n- 上传过程中需要妥善处理加载等待状态（如展示 Loading），并防范请求失败或文件过大等边界情况，给予用户良好反馈\n- 上传限制：支持单文件最大 10MB，支持主流图片、视频和二进制包文件。\n- 本接口在 App 内运行依赖用户登录态。若用户未登录，接口会返回“未登录或登录态失效”错误，业务端需捕获该异常并引导用户去登录。\n\n# Parameters\n\n| 参数名 | 类型 | 是否必填 | 说明 |\n| --- | --- | --- | --- |\n| file | object | 是 | 待上传的 HTML5 File 或 Blob 对象 |\n| filename | string | 否 | 自定义文件名，可选 |\n\n# Returns\n\n- Type: `Promise<Response>`\n\n### Response Properties\n\n| 属性名 | 类型 | 是否必填 | 说明 |\n| --- | --- | --- | --- |\n| downloadUrl | string | 是 | 上传成功后的 CDN 访问绝对链接 |\n| name | string | 是 | 上传成功后的文件名 |\n\n# Examples\n\n```javascript\nwindow.ColorboxAI.oss.uploadFile({ file: fileObj, filename: \"avatar.png\" }).then(res => { console.log(res.downloadUrl); }).catch(err => { console.error(\"上传失败\", err.message); })\n```",
+  "files": [
+    {
+      "path": "SKILL.md",
+      "content": "---\nname: oss-uploadFile\ndescription: 支持在活动页内通过拍照、相册选择或合成二进制，将文件或图片直传至 Hupu OSS 并获取可用 CDN 地址。适用于用户上传头像、活动晒图、截图分享及二进制文件存证。\n---\n\n# Usage\n\n- JS Path: `window.ColorboxAI.oss.uploadFile(params)`\n\n# Constraints\n\n- 必须且仅允许使用 window.ColorboxAI.oss.uploadFile(params) 接口，严禁在业务端直接引入 ali-oss 或手写上传逻辑\n- 入参 file 必须为标准的 HTML5 File 或 Blob 对象\n- 上传过程中需要妥善处理加载等待状态（如展示 Loading），并防范请求失败或文件过大等边界情况，给予用户良好反馈\n- 上传限制：支持单文件最大 10MB，支持主流图片、视频和二进制包文件。\n- 本接口在 App 内运行依赖用户登录态。若用户未登录，接口会返回“未登录或登录态失效”错误，业务端需捕获该异常并引导用户去登录。\n\n# Parameters\n\n| 参数名 | 类型 | 是否必填 | 说明 |\n| --- | --- | --- | --- |\n| file | object | 是 | 待上传的 HTML5 File 或 Blob 对象 |\n| filename | string | 否 | 自定义文件名，可选 |\n\n# Returns\n\n- Type: `Promise<Response>`\n\n### Response Properties\n\n| 属性名 | 类型 | 是否必填 | 说明 |\n| --- | --- | --- | --- |\n| downloadUrl | string | 是 | 上传成功后的 CDN 访问绝对链接 |\n| name | string | 是 | 上传成功后的文件名 |\n\n# Examples\n\n```javascript\nwindow.ColorboxAI.oss.uploadFile({ file: fileObj, filename: \"avatar.png\" }).then(res => { console.log(res.downloadUrl); }).catch(err => { console.error(\"上传失败\", err.message); })\n```"
+    }
+  ],
+  "manifest": {
+    "capability": "oss-uploadFile",
+    "source": "skill-package",
+    "version": 1
+  }
+}

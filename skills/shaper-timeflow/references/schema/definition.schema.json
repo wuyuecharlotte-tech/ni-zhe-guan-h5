@@ -1,0 +1,393 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://shaper.hupu.io/timeflow/schema/definition.schema.json",
+  "title": "TimeflowDefinition",
+  "description": "配置定义（design §4.3）——接入的唯一入口，也是「配置驱动」的输入。协议单一来源：server DTO 与 SDK DTO 都由本 schema 校验。",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "workspaceId",
+    "definitionVersion",
+    "protocolVersion",
+    "scopeTypes",
+    "metrics",
+    "maxOfflineTime",
+    "stream"
+  ],
+  "properties": {
+    "workspaceId": {
+      "type": "string",
+      "description": "工作区标识（不透明；平台不解析其内容）",
+      "minLength": 1,
+      "maxLength": 64
+    },
+    "definitionVersion": {
+      "type": "integer",
+      "description": "单调递增；同版本重放返回同一结果",
+      "minimum": 1
+    },
+    "protocolVersion": {
+      "type": "integer",
+      "description": "协议版本；主版本不兼容直接拒绝",
+      "minimum": 1
+    },
+    "scopeTypes": {
+      "type": "array",
+      "description": "工作区声明的作用域类型，例如 member、device、subscription、case",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9_]{0,31}$"
+      }
+    },
+    "metrics": {
+      "type": "array",
+      "description": "可观测或计算的数值维度；平台不假定货币、资源或资产语义",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": true,
+        "required": ["metricId", "precision"],
+        "properties": {
+          "metricId": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]{0,63}$"
+          },
+          "precision": {
+            "type": "integer",
+            "description": "精度 0..6（0 = 整数货币）；precision=0 时按余数跨段累加、段末结转",
+            "minimum": 0,
+            "maximum": 6
+          },
+          "cap": {
+            "description": "指标上限（字符串十进制或 null）",
+            "type": ["string", "null"],
+            "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?$"
+          },
+          "capScope": {
+            "description": "上限执行者与作用域；v1 仅支持 stream（U12）",
+            "type": "string",
+            "enum": ["stream", "scope"],
+            "default": "stream"
+          },
+          "shared": {
+            "type": "boolean",
+            "description": "保留字段；v1 拒绝共享指标，跨作用域分配属于下游系统",
+            "default": false
+          }
+        }
+      }
+    },
+    "maxOfflineTime": {
+      "type": "integer",
+      "description": "业务单次结算最大有效离线时长（ms）；实际值取本值与平台硬上限的较小值，超出则封顶",
+      "minimum": 1
+    },
+    "stream": {
+      "type": "array",
+      "description": "流定义：平台不解释流的业务含义，只用它匹配上报的 streamKey",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": true,
+        "required": ["streamPattern", "metricId", "ruleKey", "ruleVersion", "phases"],
+        "properties": {
+          "streamPattern": {
+            "type": "string",
+            "description": "流匹配模式（如 usage:{id}）",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "displayName": {
+            "type": "string",
+            "description": "资源类型展示名称；仅用于管理和排障",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "metricId": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]{0,63}$"
+          },
+          "ruleKey": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          },
+          "ruleVersion": {
+            "type": "integer",
+            "description": "必须显式声明且能在 rule_registry 解析到不可变实现（禁止默认兜底）",
+            "minimum": 1
+          },
+          "carrier": {
+            "type": "string",
+            "enum": ["interpreter", "spi", "function"]
+          },
+          "lifecycle": {
+            "type": "string",
+            "enum": ["finite", "continuous"],
+            "default": "finite",
+            "description": "finite stream instances end in a zero-rate terminal phase and require a new streamKey for a new instance; continuous streams remain active"
+          },
+          "artifact": {
+            "type": ["string", "null"]
+          },
+          "phases": {
+            "type": "array",
+            "description": "解释器可执行的全部内容（受限运算：baseRate / capacity / until）",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "additionalProperties": true,
+              "required": ["name", "baseRate", "until"],
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "baseRate": {
+                  "type": "string",
+                  "description": "基础速率（单位/毫秒），字符串十进制",
+                  "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$"
+                },
+                "capacity": {
+                  "description": "相位容量上限（字符串十进制或 null）",
+                  "type": ["string", "null"]
+                },
+                "until": {
+                  "type": "object",
+                  "description": "相位终止条件——必须**有界**（设计校验 2）",
+                  "required": ["kind"],
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "enum": ["progress", "event", "immortal"]
+                    },
+                    "value": {
+                      "type": ["string", "number", "null"]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "decay": {
+            "type": "array",
+            "description": "按离线时长衰减的修正（after 毫秒之后生效）",
+            "items": {
+              "type": "object",
+              "required": ["stat", "op", "value", "after"],
+              "properties": {
+                "stat": {
+                  "type": "string",
+                  "enum": ["rate", "capacity"]
+                },
+                "op": {
+                  "type": "string",
+                  "enum": ["add", "mul"]
+                },
+                "value": {
+                  "type": "string"
+                },
+                "after": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "caps": {
+      "type": "object",
+      "description": "资源上限速查表（metricId → 字符串十进制）",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "tasks": {
+      "type": "array",
+      "description": "业务自定义定时任务定义（U23 已裁决：去中心化 peer 调度与执行）",
+      "items": {
+        "type": "object",
+        "required": ["taskKey", "cron", "selector", "action"],
+        "properties": {
+          "taskKey": {
+            "type": "string"
+          },
+          "displayName": {
+            "type": "string",
+            "description": "任务展示名称；仅用于管理和排障，不参与调度身份",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "cron": {
+            "type": "string"
+          },
+          "timezone": {
+            "type": "string",
+            "default": "Asia/Shanghai"
+          },
+          "enabled": {
+            "type": "boolean",
+            "default": false
+          },
+          "selector": {"$ref": "#/properties/taskSelector"},
+          "action": {"$ref": "#/properties/taskAction"},
+          "maxConcurrency": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 64
+          },
+          "batchSize": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 2000
+          },
+          "routeStrategy": {
+            "type": "string",
+            "enum": ["ROUND_ROBIN", "FAILOVER", "BUSY_OVER"]
+          },
+          "timeoutMs": {
+            "type": "integer",
+            "minimum": 100,
+            "maximum": 3600000
+          },
+          "retryLimit": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 20
+          },
+          "misfirePolicy": {
+            "type": "string",
+            "enum": ["GRACE", "SKIP", "CATCH_UP"]
+          }
+        }
+      }
+    },
+    "ruleDataFields": {
+      "type": "array",
+      "description": "Definition-declared ruleData fields that task selectors may reference",
+      "items": {"type": "string"}
+    },
+    "delivery": {
+      "type": "object",
+      "description": "Optional generic change-event distribution to deployment-bound subscribers.",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {"type": "boolean", "default": false},
+        "mode": {"type": "string", "enum": ["shadow", "live"], "default": "shadow"},
+        "includeSourceStreams": {"type": "boolean", "default": true},
+        "subscribers": {
+          "type": "array",
+          "maxItems": 32,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["key", "version", "metrics", "eventKinds"],
+            "properties": {
+              "key": {"type": "string", "pattern": "^[a-z][a-z0-9_-]{0,127}$"},
+              "displayName": {
+                "type": "string",
+                "description": "回调订阅展示名称；仅用于管理和排障，不参与订阅身份",
+                "minLength": 1,
+                "maxLength": 128
+              },
+              "version": {"type": "integer", "minimum": 1},
+              "metrics": {
+                "type": "array",
+                "minItems": 1,
+                "uniqueItems": true,
+                "items": {"type": "string", "pattern": "^[a-z][a-z0-9_]{0,63}$"}
+              },
+              "authoritativeMetrics": {
+                "type": "array",
+                "uniqueItems": true,
+                "items": {"type": "string", "pattern": "^[a-z][a-z0-9_]{0,63}$"}
+              },
+              "eventKinds": {
+                "type": "array",
+                "minItems": 1,
+                "uniqueItems": true,
+                "items": {"type": "string", "minLength": 1, "maxLength": 128}
+              }
+            }
+          }
+        }
+      }
+    },
+    "events": {
+      "type": "array",
+      "description": "变化事件类型的展示名称映射；不写入历史事件 payload",
+      "maxItems": 128,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["kind", "displayName"],
+        "properties": {
+          "kind": {"type": "string", "minLength": 1, "maxLength": 128},
+          "displayName": {"type": "string", "minLength": 1, "maxLength": 128},
+          "description": {"type": "string", "minLength": 1, "maxLength": 256}
+        }
+      }
+    },
+    "taskSelector": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["scopeType", "limit"],
+      "properties": {
+        "scopeType": {"type": "string", "minLength": 1},
+        "streamPattern": {"type": "string", "minLength": 1},
+        "ruleKey": {"type": "string", "minLength": 1},
+        "phaseIndexIn": {
+          "type": "array",
+          "items": {"type": "integer", "minimum": 0},
+          "maxItems": 64
+        },
+        "where": {
+          "type": "array",
+          "maxItems": 16,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["field", "op", "value"],
+            "properties": {
+              "field": {"type": "string", "minLength": 1},
+              "op": {
+                "type": "string",
+                "enum": ["eq", "ne", "lt", "lte", "gt", "gte", "in", "prefix"]
+              },
+              "value": {"type": "string", "minLength": 1}
+            }
+          }
+        },
+        "orderBy": {"type": "string", "minLength": 1},
+        "limit": {"type": "integer", "minimum": 1, "maximum": 10000}
+      }
+    },
+    "taskAction": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["kind"],
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": ["APPLY_WINDOW", "EMIT_POINT", "TRIGGER_SETTLE", "NOTIFY", "EVICT_CACHE"]
+        },
+        "metricId": {"type": "string"},
+        "streamKeyTemplate": {"type": "string"},
+        "stat": {"type": "string", "enum": ["rate", "capacity"]},
+        "op": {"type": "string", "enum": ["add", "mul"]},
+        "value": {"type": "string"},
+        "durationMs": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "APPLY_WINDOW 的持续时间；激活校验要求不超过平台 maxOfflineTime"
+        },
+        "pointKind": {"type": "string"},
+        "source": {"type": "string"},
+        "idempotency": {"type": "string", "maxLength": 128}
+      }
+    }
+  }
+}

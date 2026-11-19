@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://shaper.hupu.io/timeflow/schema/point-report.schema.json",
+  "title": "PointReport",
+  "description": "时间点事件与值操作上报（design §3.5 / §10.4）。v1 值操作只开放 ADD 与 SET。",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "streamKey",
+    "kind",
+    "eventTime",
+    "eventId"
+  ],
+  "properties": {
+    "streamKey": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "kind": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 32
+    },
+    "eventTime": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "ops": {
+      "type": "array",
+      "maxItems": 64,
+      "items": {
+        "type": "object",
+        "additionalProperties": true,
+        "required": ["op", "value"],
+        "properties": {
+          "op": {
+            "type": "string",
+            "enum": ["ADD", "SET"]
+          },
+          "value": {
+            "$ref": "#/$defs/decimalSigned"
+          }
+        }
+      }
+    },
+    "transition": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "eventId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64
+    }
+  },
+  "$defs": {
+    "decimalSigned": {
+      "type": "string",
+      "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]{1,18})?$"
+    }
+  }
+}

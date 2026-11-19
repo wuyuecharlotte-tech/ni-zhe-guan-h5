@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://shaper.hupu.io/timeflow/schema/business-event.schema.json",
+  "title": "BusinessEventRequest",
+  "description": "A generic business fact explicitly registered by the owning application. The platform does not infer it from a stream, window or point operation.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["streamKey", "kind", "eventTime", "eventId"],
+  "properties": {
+    "streamKey": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "kind": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "eventTime": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "eventId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64
+    },
+    "payload": {
+      "type": "object"
+    }
+  }
+}

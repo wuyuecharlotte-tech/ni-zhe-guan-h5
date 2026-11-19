@@ -1,0 +1,4 @@
+interface:
+  display_name: "WASM 文件压缩"
+  short_description: "提示并启动本地 WASM 压缩网页，比较 Brotli、gzip、zstd 并下载结果"
+  default_prompt: "使用 $wasm-compression 帮我压缩 WASM 文件，启动本地上传页面并说明如何下载和部署压缩结果。"

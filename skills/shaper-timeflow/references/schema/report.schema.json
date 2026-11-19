@@ -1,0 +1,150 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://shaper.hupu.io/timeflow/schema/report.schema.json",
+  "title": "TimeflowSettleReport",
+  "description": "SettleReport（design §4.4 / §10.4）——必须自包含：工作区侧只靠这一份报告就能完成落地与对账。",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "settlementId",
+    "realDuration",
+    "effectiveDuration",
+    "segments",
+    "gains",
+    "losses",
+    "capped",
+    "events",
+    "ruleVersions",
+    "definitionVersion",
+    "replayed",
+    "approximated"
+  ],
+  "properties": {
+    "settlementId": {
+      "type": "string",
+      "description": "结算标识；工作区侧落地幂等键"
+    },
+    "realDuration": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "真实离线时长（ms）"
+    },
+    "effectiveDuration": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "封顶后参与积分的时长（ms）"
+    },
+    "segments": {
+      "type": "array",
+      "description": "可解释时间轴——客服 / 对账 / 业务变化明细三处复用同一份数据",
+      "items": {
+        "type": "object",
+        "required": ["from", "to"],
+        "properties": {
+          "from": { "type": "integer" },
+          "to": { "type": "integer" },
+          "streamKey": { "type": "string" },
+          "metricId": { "type": "string" },
+          "phaseIndex": {
+            "type": "integer",
+            "description": "段内相位序号——解释「这段为什么是这个速率」（对应定义 stream[].phases[phaseIndex]）"
+          },
+          "rate": { "type": "string" },
+          "modifiers": { "type": "object" },
+          "produced": { "type": "string" },
+          "capped": { "type": "string" },
+          "netChange": { "type": "string" },
+          "valueStart": { "type": "string", "description": "段起点存量（同一内核段结果）" },
+          "valueEnd": { "type": "string", "description": "段终点存量（同一内核段结果）" }
+        }
+      }
+    },
+    "gains": {
+      "type": "object",
+      "description": "只记实际正变化（Σ max(netChange,0)），逐 metricId；容量截断不进 gains",
+      "additionalProperties": { "type": "string" }
+    },
+    "losses": {
+      "type": "object",
+      "description": "只记负变化（Σ min(netChange,0)）；SET 重置不算 losses",
+      "additionalProperties": { "type": "string" }
+    },
+    "capped": {
+      "type": "object",
+      "description": "因容量上限未获得的部分，单独可查",
+      "additionalProperties": { "type": "string" }
+    },
+    "events": {
+      "type": "array",
+      "description": "区间内的事件与值操作（含重置）",
+      "items": {
+        "type": "object",
+        "properties": {
+          "streamKey": { "type": "string" },
+          "kind": { "type": "string" },
+          "eventTime": { "type": "integer" },
+          "eventId": { "type": ["string", "null"] },
+          "origin": { "type": "string", "enum": ["report", "derived"] },
+          "ops": { "type": "array" }
+        }
+      }
+    },
+    "ruleVersions": {
+      "type": "object",
+      "description": "本次结算固化的 ruleKey → ruleVersion（design §19.5）",
+      "additionalProperties": { "type": "integer" }
+    },
+    "definitionVersion": {
+      "type": "integer",
+      "description": "本次结算使用的定义版本（重放必须用它）"
+    },
+    "curveApplied": {
+      "type": "boolean"
+    },
+    "replayed": {
+      "type": "boolean",
+      "description": "幂等回放（命中已完成记录，未重算）"
+    },
+    "approximated": {
+      "type": "boolean",
+      "description": "切点降采样近似（超 MAX_CUTS）"
+    },
+    "cappedByTime": {
+      "type": "boolean",
+      "description": "是否因 maxOfflineTime 封顶（与 capped 的容量截断区分）；真实时长照记 realDuration"
+    },
+    "clockRegression": {
+      "type": "boolean",
+      "description": "是否发生时钟回拨（now < last_settle_time）：本次 effectiveDuration=0、不产出，并记 CLOCK_REGRESSION 审计"
+    },
+    "netChange": {
+      "type": "object",
+      "description": "逐资源 Σ netChange（价值守恒 value_end − value_start == Σ netChange 的对外呈现）",
+      "additionalProperties": { "type": "string" }
+    },
+    "streamLifecycles": {
+      "type": "array",
+      "description": "本次计算确认的资源实例生命周期事实；旧报告缺省为空数组",
+      "items": {
+        "type": "object",
+        "required": ["streamKey", "kind", "state"],
+        "properties": {
+          "streamKey": { "type": "string" },
+          "kind": { "type": ["string", "null"], "enum": ["finite", "continuous", null] },
+          "state": {
+            "type": "string",
+            "enum": ["active", "terminated", "legacy_unknown"]
+          },
+          "terminalAt": { "type": ["integer", "null"] },
+          "terminalReason": {
+            "type": ["string", "null"],
+            "enum": ["progress", "event", "legacy", null]
+          },
+          "terminalPhaseIndex": { "type": ["integer", "null"] },
+          "terminalValue": { "type": ["string", "null"] },
+          "terminalEventId": { "type": ["string", "null"] }
+        }
+      }
+    }
+  }
+}

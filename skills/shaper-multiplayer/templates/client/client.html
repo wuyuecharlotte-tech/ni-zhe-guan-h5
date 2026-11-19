@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Colyseus 共享计数 Demo</title>
+  <!-- ColorboxAI 和 Colyseus 0.18.2 由平台在当前 iframe 内注入。 -->
+</head>
+<body>
+  <h1>共享计数</h1>
+  <p>两端进入同一房间，点击 +1 验证状态同步。</p>
+  <button id="join">进入房间</button>
+  <button id="increment" disabled>+1</button>
+  <button id="leave" disabled>离开房间</button>
+  <p id="status" role="status">未连接</p>
+  <p>房间：<span id="roomId">—</span></p>
+  <p>计数：<output id="count">—</output></p>
+
+  <script>
+    // 替换为当前项目的真实配置。
+    const APP_ID = 'app_REPLACE_ME';
+    const ENDPOINT = 'https://REPLACE_ME.sh.run.tcloudbase.com';
+    const joinButton = document.getElementById('join');
+    const incrementButton = document.getElementById('increment');
+    const leaveButton = document.getElementById('leave');
+    const statusText = document.getElementById('status');
+    let room;
+
+    // randomUUID requires a secure context; getRandomValues also works on HTTP DEV pages.
+    function createAffinityId() {
+      if (typeof crypto.randomUUID === 'function') return crypto.randomUUID();
+      const bytes = crypto.getRandomValues(new Uint8Array(16));
+      bytes[6] = (bytes[6] & 15) | 64;
+      bytes[8] = (bytes[8] & 63) | 128;
+      const hex = Array.from(bytes, value => value.toString(16).padStart(2, '0')).join('');
+      return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
+    }
+
+    async function request(path, data) {
+      const response = await window.ColorboxAI.request({
+        url: ENDPOINT + path,
+        method: data === undefined ? 'GET' : 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        data,
+        // Game Token is sent in the JSON body; no cookies or SDK-added platform headers are needed.
+        credentials: 'omit',
+        platformHeaders: false,
+        timeout: 20000,
+      });
+      if (!Number.isInteger(response.statusCode) || response.statusCode < 200 || response.statusCode >= 300) {
+        throw new Error(`请求失败：HTTP ${response.statusCode}`);
+      }
+      return {
+        data: typeof response.data === 'string' ? JSON.parse(response.data) : response.data,
+        headers: response.headers || {},
+      };
+    }
+
+    joinButton.onclick = async () => {
+      if (joinButton.disabled) return;
+      joinButton.disabled = true;
+      statusText.textContent = '连接中…';
+      try {
+        if (APP_ID.includes('REPLACE_ME') || ENDPOINT.includes('REPLACE_ME')) throw new Error('请先配置 appId 和 endpoint');
+        if (!window.ColorboxAI?.game?.auth || !window.ColorboxAI?.request || !window.Colyseus?.Client) throw new Error('请在已注入 SDK 的平台页面中运行');
+
+        // 1. 获取真实玩家的 Game Token。
+        const auth = await window.ColorboxAI.game.auth({ appId: APP_ID });
+        if (auth.code !== 200 || !auth.data?.token) throw new Error('获取身份失败，请先登录');
+
+        // 2. 为本次连接生成亲和标识，请服务端匹配房间并预约座位。
+        // 不依赖 /health 或网关响应头；/health 仅用于运维验收。
+        const affinity = createAffinityId();
+        const { data } = await request('/admit?cloudbase_session_id=' + encodeURIComponent(affinity), {
+          gameToken: auth.data.token,
+        });
+        if (!data?.reservation || !data.affinity) throw new Error('服务端未返回座位预约');
+
+        // 3. 使用实际房间的亲和标识连接。
+        const url = new URL(ENDPOINT);
+        url.searchParams.set('cloudbase_session_id', data.affinity);
+        const client = new window.Colyseus.Client(url.toString());
+        client.auth.token = auth.data.token;
+        room = await client.consumeSeatReservation(data.reservation);
+        document.getElementById('roomId').textContent = room.roomId;
+        statusText.textContent = '已连接';
+        leaveButton.disabled = false;
+
+        // 4. 只渲染服务器状态；点击按钮不直接修改本地计数。
+        const render = state => {
+          if (typeof state.count !== 'number') return;
+          document.getElementById('count').textContent = state.count;
+          incrementButton.disabled = false;
+        };
+        room.onStateChange(render);
+        render(room.state);
+        room.onDrop(() => {
+          incrementButton.disabled = true;
+          statusText.textContent = '连接中断，等待恢复或关闭';
+        });
+        room.onReconnect(() => {
+          statusText.textContent = '已恢复连接';
+          render(room.state);
+        });
+        room.onLeave(() => {
+          room = undefined;
+          joinButton.disabled = false;
+          incrementButton.disabled = leaveButton.disabled = true;
+          document.getElementById('roomId').textContent = '—';
+          document.getElementById('count').textContent = '—';
+          statusText.textContent = '已离开';
+        });
+      } catch (error) {
+        statusText.textContent = error.message;
+        joinButton.disabled = false;
+      }
+    };
+
+    // 服务端须实现 increment 消息，并修改 Schema 中的 count 字段。
+    incrementButton.onclick = () => {
+      if (room && !incrementButton.disabled) room.send('increment');
+    };
+    leaveButton.onclick = async () => {
+      if (!room) return;
+      leaveButton.disabled = incrementButton.disabled = true;
+      try { await room.leave(); }
+      catch { statusText.textContent = '退出失败，请刷新页面'; }
+    };
+  </script>
+</body>
+</html>

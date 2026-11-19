@@ -1,0 +1,7 @@
+interface:
+  display_name: "一致性与故障设计"
+  short_description: "推演缓存竞态、交易重试与过载传播，设计有界且可恢复的系统行为"
+  default_prompt: "使用 $engineering-reliability 检查本次改动的业务不变量、并发时间线、资源隔离和失败恢复行为。"
+
+policy:
+  allow_implicit_invocation: true

@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://shaper.hupu.io/timeflow/schema/receipt-request.schema.json",
+  "title": "ReceiptRequest",
+  "description": "报告落地回执（design §10.5 / §13.1）。ACK 可带 appliedDigest；NACK 必带失败原因与是否可重试。",
+  "$defs": {
+    "appliedDigest": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "AckRequest": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["settlementId"],
+      "properties": {
+        "settlementId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "appliedDigest": {
+          "$ref": "#/$defs/appliedDigest"
+        }
+      }
+    },
+    "NackRequest": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["settlementId", "code", "message", "retryable"],
+      "properties": {
+        "settlementId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "code": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "message": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512
+        },
+        "retryable": {
+          "type": "boolean"
+        },
+        "details": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      }
+    }
+  },
+  "oneOf": [
+    {"$ref": "#/$defs/AckRequest"},
+    {"$ref": "#/$defs/NackRequest"}
+  ]
+}

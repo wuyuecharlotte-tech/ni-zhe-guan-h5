@@ -1,0 +1,7 @@
+interface:
+  display_name: "场景驱动工程设计"
+  short_description: "从真实业务场景推导前后端工作量、正确性与资源边界，并实施验证"
+  default_prompt: "使用 $engineering-design 分析本次需求的业务语义与端到端工作量，选择可验证的最小方案并完成授权实现。"
+
+policy:
+  allow_implicit_invocation: true

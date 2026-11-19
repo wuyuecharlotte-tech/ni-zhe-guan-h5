@@ -1,0 +1,46 @@
+{
+  "name": "@hupu/shaper-timeflow-protocol-sdk",
+  "version": "0.0.1",
+  "description": "Shaper Timeflow 协议 SDK：上报 → 幂等重放 → 拉报告 → 回执的机械劳动（DTO 由 docs/schema/*.json 生成）",
+  "license": "UNLICENSED",
+  "private": false,
+  "type": "module",
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
+  "types": "./dist/types/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/types/index.d.ts",
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/index.js"
+    },
+    "./testkit": {
+      "types": "./dist/types/testkit/index.d.ts",
+      "import": "./dist/esm/testkit/index.js",
+      "require": "./dist/cjs/testkit/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist"
+  ],
+  "sideEffects": false,
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "clean": "node scripts/clean-dist.mjs",
+    "generate": "node scripts/generate-dto.mjs",
+    "generate:check": "node scripts/generate-dto.mjs --check",
+    "build": "npm run clean && tsc -p tsconfig.esm.json && tsc -p tsconfig.cjs.json && node scripts/finalize-dist.mjs",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@types/node": "^25.9.5",
+    "json-schema-to-typescript": "^16.0.0",
+    "typescript": "~5.9.3",
+    "vitest": "^3.2.4"
+  }
+}

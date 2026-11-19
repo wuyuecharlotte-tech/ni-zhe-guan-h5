@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "product": "Shaper Timeflow",
+  "sdkVersion": "0.0.1",
+  "artifacts": {
+    "typescript": {
+      "name": "@hupu/shaper-timeflow-protocol-sdk",
+      "version": "0.0.1",
+      "path": "typescript"
+    },
+    "java": {
+      "coordinate": "com.hupu.shaper:shaper-timeflow-protocol-sdk:0.0.1",
+      "path": "java/shaper-timeflow-protocol-sdk-0.0.1.jar"
+    },
+    "ruleSdk": {
+      "coordinate": "com.hupu.shaper:shaper-timeflow-rule-sdk:0.0.1",
+      "path": "rule-sdk/shaper-timeflow-rule-sdk-0.0.1.jar"
+    },
+    "testkit": {
+      "coordinate": "com.hupu.shaper:shaper-timeflow-testkit:0.0.1",
+      "path": "testkit/shaper-timeflow-testkit-0.0.1.jar"
+    }
+  }
+}

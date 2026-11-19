@@ -1,0 +1,36 @@
+capability	method	path	surface	mode	idempotency
+workspace.provision	POST	/shaper/timeflow/v1/workspaces	public-protocol	current	requestId + X-Request-Id
+scope-type.provision	POST	/shaper/timeflow/v1/scope-types	public-protocol	current	requestId + X-Request-Id
+definition.lifecycle	POST	/shaper/timeflow/v1/definitions	public-protocol	current	definitionVersion
+definition.lifecycle	POST	/shaper/timeflow/v1/definitions/{version}/validate	public-protocol	current	definitionVersion
+definition.lifecycle	POST	/shaper/timeflow/v1/definitions/{version}/activate	public-protocol	current	definitionVersion
+definition.lifecycle	GET	/shaper/timeflow/v1/definitions/{version}	public-protocol	current	read-only
+scope.lifecycle	POST	/shaper/timeflow/v1/scopes/register	public-protocol	current	requestId
+scope.lifecycle	POST	/shaper/timeflow/v1/scopes/{scopeType}/{scopeId}/freeze	public-protocol	current	requestId
+scope.lifecycle	POST	/shaper/timeflow/v1/scopes/{scopeType}/{scopeId}/close	public-protocol	current	requestId
+identity.resolve	POST	/internal/identity/resolve	public-protocol	target	identity
+guest.session	POST	/api/timeflow/apps/{appId}/guest/session	public-protocol	target	requestId
+guest.claim	POST	/api/timeflow/apps/{appId}/guest/claim	public-protocol	target	requestId
+stream.write	POST	/shaper/timeflow/v1/{scopeType}/{scopeId}/stream	public-protocol	current	requestId
+window.write	POST	/shaper/timeflow/v1/{scopeType}/{scopeId}/windows	public-protocol	current	requestId
+point.write	POST	/shaper/timeflow/v1/{scopeType}/{scopeId}/points	public-protocol	current	eventId
+business-event.register	POST	/shaper/timeflow/v1/{scopeType}/{scopeId}/business-events	public-protocol	current	eventId
+settlement.sync	POST	/shaper/timeflow/v1/{type}/{id}/settlements	public-protocol	current	server
+settlement.async	POST	/shaper/timeflow/v1/{type}/{id}/settlements/async	public-protocol	current	server
+settlement.poll	GET	/shaper/timeflow/v1/settlements/async/{settlementId}	public-protocol	current	read-only
+settlement.poll	GET	/shaper/timeflow/v1/settlements/{settlementId}	public-protocol	current	read-only
+settlement.ack	POST	/shaper/timeflow/v1/settlements/{settlementId}/ack	public-protocol	current	settlementId
+settlement.ack	POST	/shaper/timeflow/v1/settlements/{settlementId}/nack	public-protocol	current	settlementId
+projection.read	GET	/shaper/timeflow/v1/{scopeType}/{scopeId}/projections	public-protocol	current	read-only
+stream.read	GET	/shaper/timeflow/v1/{scopeType}/{scopeId}/stream/{streamKey}	public-protocol	current	read-only
+batch.write	POST	/shaper/timeflow/v1/{type}/{id}/stream/batch	public-protocol	current	per-item
+batch.write	POST	/shaper/timeflow/v1/{type}/{id}/windows/batch	public-protocol	current	per-item
+batch.write	POST	/shaper/timeflow/v1/{type}/{id}/points/batch	public-protocol	current	per-item
+batch.write	POST	/shaper/timeflow/v1/events/batch	public-protocol	current	per-item
+task.control	POST	/shaper/timeflow/v1/tasks/{taskKey}/enable	public-protocol	current	taskKey
+task.control	POST	/shaper/timeflow/v1/tasks/{taskKey}/disable	public-protocol	current	taskKey
+task.control	POST	/shaper/timeflow/v1/tasks/{taskKey}/trigger	public-protocol	current	runId
+task.read	GET	/shaper/timeflow/v1/tasks/runs	public-protocol	current	read-only
+task.read	GET	/shaper/timeflow/v1/tasks/runs/{runId}	public-protocol	current	read-only
+change-delivery.ack	POST	/shaper/timeflow/v1/change-deliveries/{deliveryId}/ack	public-protocol	current	deliveryId
+change-delivery.ack	POST	/shaper/timeflow/v1/change-deliveries/{deliveryId}/nack	public-protocol	current	deliveryId

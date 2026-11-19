@@ -1,0 +1,6 @@
+interface:
+  display_name: "性能优化"
+  short_description: "前后端性能诊断与优化，并在代码完成后主动检查性能与用户体验"
+  default_prompt: "使用 $shaper-game-performance 沿用户操作链检查当前项目的前后端性能。用户请求优化时先确认特定问题或全面优化；代码实现完成时主动检查相关链路，基于证据实施范围内优化并复测。"
+policy:
+  allow_implicit_invocation: true

@@ -1,0 +1,7 @@
+interface:
+  display_name: "端到端工作量与性能分析"
+  short_description: "连接前端触发、接口、缓存与SQL，定位成本放大关系和实际瓶颈"
+  default_prompt: "使用 $engineering-workload 追踪用户动作到数据库的成本，基于证据分析瓶颈并提出减少工作量的方案。"
+
+policy:
+  allow_implicit_invocation: true

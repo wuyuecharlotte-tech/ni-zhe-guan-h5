@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://shaper.hupu.io/timeflow/schema/window-report.schema.json",
+  "title": "WindowReport",
+  "description": "带时间窗的速率/容量修正上报（design §10.4）。endTime 必须晚于 startTime。",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "streamKey",
+    "stat",
+    "op",
+    "value",
+    "startTime",
+    "endTime",
+    "requestId"
+  ],
+  "properties": {
+    "streamKey": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "stat": {
+      "type": "string",
+      "enum": ["rate", "capacity"]
+    },
+    "op": {
+      "type": "string",
+      "enum": ["add", "mul"]
+    },
+    "value": {
+      "$ref": "#/$defs/decimal"
+    },
+    "startTime": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "endTime": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "source": {
+      "type": "string",
+      "maxLength": 32
+    },
+    "requestId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64
+    }
+  },
+  "$defs": {
+    "decimal": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]{1,18})?$"
+    }
+  }
+}

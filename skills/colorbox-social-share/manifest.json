@@ -1,0 +1,34 @@
+{
+  "id": "colorbox-social-share",
+  "name": "社交分享",
+  "description": "让用户将活动或内容分享至微信、微博，方便邀请好友一起参与。",
+  "category": "设备与分享",
+  "categories": [
+    "设备与分享"
+  ],
+  "icon": "share-2",
+  "details": {
+    "capabilities": [
+      "打开虎扑 App 的分享面板，分享活动链接和介绍。",
+      "支持微信和微博等分享渠道。"
+    ],
+    "scenarios": [
+      "活动传播、好友邀请、内容推荐、成绩分享。"
+    ],
+    "usageTips": [
+      "说明分享入口、标题、介绍、配图和目标链接，由用户点击后发起分享。"
+    ]
+  },
+  "content": "---\nname: social-share\ndescription: 唤起原生分享面板，支持分享微信、微博。当页面需要进行社交平台分享时引导 AI 调用。\n---\n\n# Usage\n\n- JS Path: `window.ColorboxAI.social.share(params)`\n\n# Parameters\n\n| 参数名 | 类型 | 是否必填 | 说明 |\n| --- | --- | --- | --- |\n| title | string | 是 | 分享标题 |\n| link | string | 是 | 分享链接 URL，必须是 http/https 开头的完整链接 |\n| text | string | 否 | 可选，分享的副标题/描述文本 |\n| imageUrl | string | 否 | 可选，分享卡片的缩略图图片 URL |\n\n# Returns\n\n- Type: `Promise<void>`\n\n# Examples\n\n```javascript\nwindow.ColorboxAI.bridge.device.share({ title: \"活动开始啦\", link: window.location.href, text: \"快来一起参与投票赢大奖吧！\", imageUrl: \"https://example.com/thumb.png\" });\n```",
+  "files": [
+    {
+      "path": "SKILL.md",
+      "content": "---\nname: social-share\ndescription: 唤起原生分享面板，支持分享微信、微博。当页面需要进行社交平台分享时引导 AI 调用。\n---\n\n# Usage\n\n- JS Path: `window.ColorboxAI.social.share(params)`\n\n# Parameters\n\n| 参数名 | 类型 | 是否必填 | 说明 |\n| --- | --- | --- | --- |\n| title | string | 是 | 分享标题 |\n| link | string | 是 | 分享链接 URL，必须是 http/https 开头的完整链接 |\n| text | string | 否 | 可选，分享的副标题/描述文本 |\n| imageUrl | string | 否 | 可选，分享卡片的缩略图图片 URL |\n\n# Returns\n\n- Type: `Promise<void>`\n\n# Examples\n\n```javascript\nwindow.ColorboxAI.bridge.device.share({ title: \"活动开始啦\", link: window.location.href, text: \"快来一起参与投票赢大奖吧！\", imageUrl: \"https://example.com/thumb.png\" });\n```"
+    }
+  ],
+  "manifest": {
+    "capability": "social-share",
+    "source": "skill-package",
+    "version": 1
+  }
+}
