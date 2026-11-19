@@ -30,7 +30,7 @@
   return [h("section",{class:"hero"},
    h("div",{class:"heroText"},
     h("div",{class:"kicker"},"生涯模式 / 名利、篮球与论坛"),
-    h("h1",null,"你这冠算不算？"),
+    h("h1",null,h("span",{class:"heroLead"},"选秀出道，"),"这次你要活成谁？"),
     h("p",null,"同一场球，教练看录像，球迷看比分，评论区看截图。你决定怎么打球，他们决定怎么记住你。"),
     h("div",{class:"actions"},picks.length?[btn("primary","continue",finished?"查看生涯结局":"继续我的生涯"),btn("ghost","reset","开启新生涯")]:btn("primary","start","进入选秀夜"))),
    art("arena","球员从昏暗通道走向球场","heroArt")),
@@ -153,8 +153,8 @@
    if(postBtn.disabled)return; postBtn.disabled=true;
 
    const res=await window.PLATFORM.share({blob,
-    title:"我的生涯成分："+data.heading+"｜你这冠算不算？",
-    content:"我在《你这冠算不算？》打完了 "+nodes.length+" 站生涯，成分鉴定："+(data.mixText||"自成一派")+"。你的生涯，这冠算不算？",
+    title:"我的生涯成分："+data.heading+"｜选秀出道，这次你要活成谁？",
+    content:"我在《选秀出道，这次你要活成谁？》打完了 "+nodes.length+" 站生涯，成分鉴定："+(data.mixText||"自成一派")+"。你呢，这次要活成谁？",
     onStage:k=>{tip.textContent=stages[k]||"";}});
    tip.textContent=res.msg; postBtn.disabled=false;
   });

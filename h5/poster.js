@@ -78,7 +78,7 @@ window.POSTER = (() => {
 
     let y = PAD;
     ctx.fillStyle = C.hot; ctx.beginPath(); ctx.arc(PAD + 16, y + 22, 16, 0, Math.PI * 2); ctx.fill();
-    text(ctx, '你这冠算不算？', PAD + 46, y + 2, 36, C.white, 800);
+    text(ctx, '这次你要活成谁？', PAD + 46, y + 2, 36, C.white, 800);
     roundRect(ctx, W - PAD - 190, y - 4, 190, 54, 27, 'rgba(255,255,255,.12)');
     text(ctx, '成分鉴定', W - PAD - 95, y + 9, 28, C.white, 700, 180, 1, 1, 'center');
     y += 130;
@@ -135,7 +135,7 @@ window.POSTER = (() => {
 
     ctx.fillStyle = 'rgba(255,255,255,.14)'; ctx.fillRect(PAD, y, W - PAD * 2, 2); y += 34;
     text(ctx, (data.count || 18) + ' 站生涯，你决定怎么打球，论坛决定怎么记住你。', PAD, y, 28, C.muted, 400);
-    text(ctx, '来虎扑打一遍你自己的生涯 →《你这冠算不算？》', PAD, y + 44, 30, C.gold, 700);
+    text(ctx, '来虎扑打一遍你自己的生涯 →《选秀出道，这次你要活成谁？》', PAD, y + 44, 30, C.gold, 700);
     // 按内容高度裁切，最矮为正方形
     const outH = Math.max(Math.ceil(y + 44 + 30 + PAD), W);
     const out = document.createElement('canvas'); out.width = W; out.height = outH;
