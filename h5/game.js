@@ -98,23 +98,35 @@
   return {exact:false,top:score.length?score.filter(x=>x.m===score[0].m&&x.r.anchors.length===score[0].r.anchors.length).slice(0,3):[]};
  }
  const badges={
-  stats:{title:"技术统计优先",one:"赛后看了一眼表格；论坛说这叫认真。",more:"录像还没剪完，你的里程碑海报已经出了三版。",fan:"护卫队：数据是一场一场打出来的，你刷一个试试。"},
-  glory:{title:"镜头必须有我",one:"你知道哪些时刻值得留张照片。",more:"队友在捧杯，你已经选好哪张是封面了。",fan:"护卫队：领袖站C位有什么问题？镜头给谁，是导播说了算。"},
-  exit:{title:"阵容滑动解锁",one:"你看了看下份合同，不等于已经订了机票。",more:"论坛还在等复盘，你已经开始对比下一站的首发名单。",fan:"护卫队：自由球员选队是规则给的权利，现在人人都这么干。"},
-  mic:{title:"麦克风在我手里",one:"别人还在起草标题，你先把自己的版本讲了。",more:"记者准备了五个问题，你一句话给他写完了五篇稿。",fan:"护卫队：敢开口就有人骂，不开口又说没担当，怎么都不对。"}
+  stats:{title:"技术统计优先",one:"赛后看了一眼表格；论坛说这叫认真。",more:"录像还没剪完，你的里程碑海报已经出了三版。",fan:"护卫队：数据是一场一场打出来的，你刷一个试试。",hot:"哥们，你的赛后回顾怎么还能按列排序？"},
+  glory:{title:"镜头必须有我",one:"你知道哪些时刻值得留张照片。",more:"队友在捧杯，你已经选好哪张是封面了。",fan:"护卫队：领袖站C位有什么问题？镜头给谁，是导播说了算。",hot:"队友：我们赢了。海报：我听见的是他赢了。"},
+  exit:{title:"阵容滑动解锁",one:"你看了看下份合同，不等于已经订了机票。",more:"论坛还在等复盘，你已经开始对比下一站的首发名单。",fan:"护卫队：自由球员选队是规则给的权利，现在人人都这么干。",hot:"下赛季的阵容深度表怎么已经有四个城市了？"},
+  mic:{title:"麦克风在我手里",one:"别人还在起草标题，你先把自己的版本讲了。",more:"记者准备了五个问题，你一句话给他写完了五篇稿。",fan:"护卫队：敢开口就有人骂，不开口又说没担当，怎么都不对。",hot:"媒体日主持人：我本来只准备问一个问题。"},
+  solo:{title:"关键球只信自己",one:"最后一球你自己来。全场都知道，包括对面。",more:"战术板上的最后一攻只画了一个箭头，指向你自己。",fan:"护卫队：敢投关键球的人，才配被记住。",hot:"最后一攻的战术板：一个箭头，指向他自己。"},
+  loyal:{title:"一座城等到老",one:"你选了留下，论坛顺手查了一下球队的补强记录。",more:"忠诚是真的，等了这么多年的替补中锋也是真的没来。",fan:"护卫队：一人一城，这年头你再找一个给我看看。",hot:"铜像的位置圈好了，替补中锋的位置还空着。"},
+  quiet:{title:"数据栏查无此人",one:"脏活你干了，集锦里没剪进去。",more:"集锦剪辑师至今没找到你的素材，对面核心倒是一直记得你。",fan:"护卫队：懂球的看防守，不懂的才只看得分栏。",hot:"集锦里找不到他，对面核心的噩梦里全是他。"},
+  ride:{title:"含金量计算器",one:"你挑了一支会打球的队，论坛开始算你占几成。",more:"戒指戴上了，论坛的含金量计算器到现在还没关机。",fan:"护卫队：选对球队也是实力，规则又没拦着。",hot:"戒指是真的，含金量讨论楼也是真的盖到了第 400 页。"},
+  pass:{title:"关键球又传了",one:"被包夹你就传，评论区有人替你数了次数。",more:"空位队友投了一晚上，评论区问你为什么不自己来。",fan:"护卫队：传给空位是正确的篮球，投丢了又不是老大的错。",hot:"关键球他又传了，空位那位已经开始热身。"},
+  rest:{title:"养生馆常驻",one:"你少打了几场，买了票的球迷记住了。",more:"背靠背的出战名单上，你的名字后面总跟着两个字：轮休。",fan:"护卫队：留着腿打季后赛，这叫对冠军负责。",hot:"今晚出战名单：轮休。季后赛见。"},
+  nice:{title:"公关部满分答卷",one:"你的回答谁都不得罪，评论区照样打了起来。",more:"记者想要一个标题，你每次都给他一篇通稿。",fan:"护卫队：不踩别人就叫没立场？那你们到底想听什么。",hot:"他的回答谁都不得罪，评论区替他把人得罪完了。"},
+  range:{title:"没进叫浪",one:"你把出手点往外挪了一步，投丢的那几个被剪成了合集。",more:"你的三分集锦有两个版本：粉丝剪的叫时代，黑子剪的叫打铁。",fan:"护卫队：空间是投出来的，丢几个怎么了。",hot:"粉丝剪的叫时代，黑子剪的叫打铁，素材是同一场。"},
+  late:{title:"早干嘛去了",one:"你练出了新招，去年说你不会的帖子被顶了上来。",more:"你每补一块短板，论坛就翻出一条“他根本不会这个”的旧帖。",fan:"护卫队：能补短板的才叫巨星，谁一出道就十项全能。",hot:"去年说他不会这招的帖子，今天被顶上了首页。"},
+  mentor:{title:"提前上岗当教练",one:"你把球交给年轻人，论坛问你是不是打不动了。",more:"你带的新人越打越好，论坛开始讨论你还剩多少场球。",fan:"护卫队：带新人是格局，不是退场。",hot:"新人把球又传了回来，他说：再来一次。"}
  };
+ const JAMES_KEYS=["stats","glory","exit","mic"]; // 只有这四类算「有点詹」
  function audit(){
   const sums=Object.fromEntries(Object.keys(badges).map(k=>[k,0]));
-  const flagged=[];
+  const flagged=[]; let jamesPicks=0;
   picks.forEach((choice,i)=>{
    const o=nodes[i].options[choice];
-   const tags=[...new Set(o?.satire||[])].filter(k=>Object.hasOwn(sums,k));
+   const tags=[...new Set([...(o?.satire||[]),...(o?.ledger||[])])].filter(k=>Object.hasOwn(sums,k));
    if(tags.length){flagged.push({i,o,tags});tags.forEach(k=>sums[k]++);}
+   if(tags.some(k=>JAMES_KEYS.includes(k)))jamesPicks++;
   });
   const dimensions=Object.keys(sums).filter(k=>sums[k]>0);
-  const points=Object.values(sums).reduce((a,b)=>a+b,0);
-  const leaning=flagged.length>=3&&dimensions.length>=2&&points>=4;
-  return {sums,flagged,dimensions,points,leaning};
+  const jamesDims=JAMES_KEYS.filter(k=>sums[k]>0),jamesPoints=JAMES_KEYS.reduce((t,k)=>t+sums[k],0);
+  const leaning=jamesPicks>=3&&jamesDims.length>=2&&jamesPoints>=4;
+  return {sums,flagged,dimensions,leaning};
  }
  let lastPoster=null,posterBusy=false;
  async function openPoster(){
@@ -146,9 +158,9 @@
   const {exact,top}=getResult(),a=audit();
   const heading=exact?"真正的詹姆斯":a.leaning?"你这路子，有点詹":top.length>1?"混合生涯":top[0]?.r.name||"自成一派";
   const opener=exact?"从选秀夜打到最后一场发布会，连场外的几次关键决定都对上了。首冠只是把你送上论坛首页。":a.leaning?"你不一定打得像他。但有几次，数据、话筒和下一份阵容名单，刚好都排在你最先要看的东西里。":top.length?"你的球场选择最接近这些球星原型。像谁，不等于复制了谁的冠军数。":"你的路线没有单一球星原型。论坛没能给你贴一个整齐的标签。";
-  const ranked=a.dimensions.sort((x,y)=>a.sums[y]-a.sums[x]);
+  const ranked=a.dimensions.sort((x,y)=>a.sums[y]-a.sums[x]).slice(0,4); // 只翻最多的四笔
   const trust=trustAt(nodes.length),locker=trust>=3?"遇到问题，他愿意在同一个镜头里和你把话讲完。":trust<=-2?"球可以照传，但散场后他先走了。":"对外各说各的，回队里还能看同一份录像。";
-  const hot=a.sums.stats>=2&&a.sums.mic>=2?"赛后问你今天怎么赢的，你说稍等，我把历史划成三个阶段给你讲。":a.sums.exit>=2&&a.sums.glory>=2?"主场字幕才打出下赛季再见，他已经在新城市采访里说我们了。":ranked[0]==="stats"?"哥们，你的赛后回顾怎么还能按列排序？":ranked[0]==="exit"?"下赛季的阵容深度表怎么已经有四个城市了？":ranked[0]==="glory"?"队友：我们赢了。海报：我听见的是他赢了。":ranked[0]==="mic"?"媒体日主持人：我本来只准备问一个问题。":"这回没刷出任何黑料。评论区决定延长讨论时间。";
+  const hot=a.sums.stats>=2&&a.sums.mic>=2?"赛后问你今天怎么赢的，你说稍等，我把历史划成三个阶段给你讲。":a.sums.exit>=2&&a.sums.glory>=2?"主场字幕才打出下赛季再见，他已经在新城市采访里说我们了。":ranked.length?badges[ranked[0]].hot:"这回没刷出任何黑料。评论区决定延长讨论时间。";
   lastPoster={heading,opener,hot,
    players:top.map(({r})=>({name:r.name,title:r.title})),
    badges:ranked.map(k=>({title:badges[k].title,count:a.sums[k],line:a.sums[k]===1?badges[k].one:badges[k].more}))};

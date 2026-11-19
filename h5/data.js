@@ -182,5 +182,24 @@ window.GAME = (() => {
     {text:'NBA／AP：次战前采访，詹姆斯谈J.R.史密斯的反弹能力',site:'NBA 官网'},
     {text:'NBA刊载的现场采访：詹姆斯谈如何配合东契奇（2026年1月）',site:'NBA 官网'}
   );
+  // 非詹姆斯向的旧账标签（按展开后的 15 站、每站 4 个选项）：不同打法翻出不同的旧账。
+  const ledger = [
+    [[],[],[],['quiet']],
+    [['range'],['quiet'],[],['solo']],
+    [['solo'],[],['quiet'],[]],
+    [['loyal'],['ride'],['quiet'],[]],
+    [['range','late'],['late'],['quiet'],['pass']],
+    [['loyal'],['solo'],[],['mentor']],
+    [['solo'],['range'],['quiet'],['solo']],
+    [[],[],['nice'],[]],
+    [[],[],[],[]],
+    [['loyal'],[],['ride'],[]],
+    [[],[],['quiet'],['mentor']],
+    [['mentor'],['solo'],[],[]],
+    [['mentor'],['rest'],[],[]],
+    [['nice'],['nice'],[],[]],
+    [[],['loyal'],['quiet'],['mentor']]
+  ];
+  ledger.forEach((row,i)=>row.forEach((tags,j)=>{ if(tags.length) expanded[i].options[j].ledger=tags; }));
   return {nodes:expanded,routes,sources};
 })();
