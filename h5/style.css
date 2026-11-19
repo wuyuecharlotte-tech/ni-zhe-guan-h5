@@ -28,7 +28,6 @@ body{padding-bottom:1.7rem}
 }
 @media(max-width:430px){.forumHead{gap:.4rem;padding:.65rem .6rem}.forumFloor{margin:0 .62rem}.heroArt img{object-position:64% 42%}}
 
-.forumTag{display:inline-block;font-size:.72rem;line-height:1.4;padding:0 .35rem;border-radius:.2rem;margin-left:.3rem;background:#e6d3b8;color:#5e3d25;vertical-align:.08em}.forumTag-F{background:#f3d36b;color:#4a3300}.forumTag-H,.forumTag-Y{background:#3a3a3a;color:#f6eddf}.forumTag-C{background:#7a1f2b;color:#fff3e6}.forumTag-N{background:#d9e3d2;color:#2f4a2a}
 .wordmark{background:none;border:0;padding:0;font:inherit;font-weight:780;cursor:pointer}
 body{padding-top:max(env(safe-area-inset-top,0px),var(--host-top,0px));padding-bottom:env(safe-area-inset-bottom,0px)}
 .sources{padding-left:1.1rem}.sources li{margin:.15rem 0}

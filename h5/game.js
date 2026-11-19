@@ -15,7 +15,16 @@
  const btn=(cls,act,label,extra={})=>h("button",{class:cls,"data-act":act,...extra},label);
  const art=(name,caption,cls="sceneArt")=>h("figure",{class:cls},h("img",{src:"art/"+name+".webp",alt:caption,...(cls==="heroArt"?{fetchpriority:"high"}:{loading:"lazy"})}));
  const headline=s=>String(s??"").replace(/^《|》$/g,"");
- const forum=(value,phase,key,closing=false,option=null,special=null)=>window.FORUM?.render({headline:headline(value),phase,key,option,special,closing})??null;
+ // 路线像詹姆斯的程度：0 不像 / 1 有点像 / 2 很像。决定论坛里粉丝多无脑、黑子多凶。
+ function heatOf(list){
+  const m=list.filter((v,i)=>v===nodes[i].james).length,n=list.length;
+  if(!n)return 0;
+  if(m>=3&&m/n>=0.6)return 2;
+  if((m>=2&&m/n>=0.4)||list[n-1]===nodes[n-1].james)return 1;
+  return 0;
+ }
+ const forum=(value,phase,key,closing=false,option=null,special=null)=>window.FORUM?.render({headline:headline(value),phase,key,option,special,closing,
+  heat:heatOf(closing?picks:picks.slice(0,idx).concat(selected===null?[]:[selected]))})??null;
 
  function home(){
   return [h("section",{class:"hero"},
@@ -89,10 +98,10 @@
   return {exact:false,top:score.length?score.filter(x=>x.m===score[0].m&&x.r.anchors.length===score[0].r.anchors.length).slice(0,3):[]};
  }
  const badges={
-  stats:{title:"技术统计优先",one:"赛后看了一眼表格；论坛说这叫认真。",more:"录像还没剪完，你的里程碑海报已经出了三版。",fan:"詹蜜：数据是一场一场打出来的，你刷一个试试。"},
-  glory:{title:"镜头必须有我",one:"你知道哪些时刻值得留张照片。",more:"队友在捧杯，你已经选好哪张是封面了。",fan:"詹蜜：领袖站C位有什么问题？镜头给谁，是导播说了算。"},
-  exit:{title:"阵容滑动解锁",one:"你看了看下份合同，不等于已经订了机票。",more:"论坛还在等复盘，你已经开始对比下一站的首发名单。",fan:"詹蜜：自由球员选队是规则给的权利，现在人人都这么干。"},
-  mic:{title:"麦克风在我手里",one:"别人还在起草标题，你先把自己的版本讲了。",more:"记者准备了五个问题，你一句话给他写完了五篇稿。",fan:"詹蜜：敢开口就有人骂，不开口又说没担当，怎么都不对。"}
+  stats:{title:"技术统计优先",one:"赛后看了一眼表格；论坛说这叫认真。",more:"录像还没剪完，你的里程碑海报已经出了三版。",fan:"护卫队：数据是一场一场打出来的，你刷一个试试。"},
+  glory:{title:"镜头必须有我",one:"你知道哪些时刻值得留张照片。",more:"队友在捧杯，你已经选好哪张是封面了。",fan:"护卫队：领袖站C位有什么问题？镜头给谁，是导播说了算。"},
+  exit:{title:"阵容滑动解锁",one:"你看了看下份合同，不等于已经订了机票。",more:"论坛还在等复盘，你已经开始对比下一站的首发名单。",fan:"护卫队：自由球员选队是规则给的权利，现在人人都这么干。"},
+  mic:{title:"麦克风在我手里",one:"别人还在起草标题，你先把自己的版本讲了。",more:"记者准备了五个问题，你一句话给他写完了五篇稿。",fan:"护卫队：敢开口就有人骂，不开口又说没担当，怎么都不对。"}
  };
  function audit(){
   const sums=Object.fromEntries(Object.keys(badges).map(k=>[k,0]));
