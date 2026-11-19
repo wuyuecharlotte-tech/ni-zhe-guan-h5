@@ -64,7 +64,7 @@
   const relation=n.relationship&&trustAt(idx)>=3?"他没让公关先审问题，自己拖了把椅子坐到你旁边。":n.relationship&&trustAt(idx)<=-2?"他听见记者提到自己，没像以前那样留下来等你。":"";
   const locker=choice&&n.relationship?(recalled?"他接过话筒，没有照公关写的念。":choice.trust>0?"散场后，他留了下来，愿意和你再聊两句。":choice.trust<0?"他没当场接话。下次战术会上，你得先把今天这句话讲清楚。":"他听完点了下头，等回更衣室再聊。"):"";
   const skill=lastSkill(idx);
-  const chapterArt=n.relationship||n.phase.includes("历史评价")?["press","赛后的采访席与麦克风"]:idx===0?["arena","球馆入场通道"]:([4,6,10].includes(idx)?["court","球场上正要出手的球员"]:null);
+  const chapterArt=n.relationship||/历史评价|里程碑|读书/.test(n.phase)?["press","赛后的采访席与麦克风"]:idx===0||/告别/.test(n.phase)?["arena","球馆入场通道"]:(/败局|总决赛|2020|垃圾时间|庆祝/.test(n.phase)?["court","球场上正要出手的球员"]:null);
   const choiceBtn=(i,letter,text,pressed,extra)=>h("button",{class:"choice","aria-pressed":String(pressed),...extra},h("span",{class:"letter"},letter),h("span",null,text));
   return h("div",{class:"play"},
    h("section",{class:"card"},

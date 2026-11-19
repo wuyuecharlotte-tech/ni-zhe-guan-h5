@@ -1,6 +1,6 @@
 const {chromium}=require('playwright');
 (async()=>{const b=await chromium.launch();
- const runs={'6-论坛吵翻':[1,2,3,3,1,2],'7-论坛日常':[0,0,1,2,0,0]};
+ const runs={'6-论坛吵翻':[1,2,1,3,1,3,1,2],'7-论坛日常':[0,0,0,1,0,0,0,0]};
  for(const [name,picks] of Object.entries(runs)){
   const pg=await (await b.newContext({viewport:{width:540,height:960},deviceScaleFactor:2})).newPage();
   await pg.goto('file://'+require('path').resolve(__dirname,'../h5/index.html'));await pg.click('[data-act=start]');

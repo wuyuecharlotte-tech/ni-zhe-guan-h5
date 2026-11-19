@@ -1,7 +1,7 @@
 {
   "activityId": "app_368013920e",
   "activityName": "未命名应用",
-  "status": "implement",
+  "status": "test",
   "confirmed": {
     "requirements": true,
     "plan": true,
@@ -516,7 +516,49 @@
       "from": "test",
       "to": "implement",
       "note": ""
+    },
+    {
+      "at": "2026-11-19T22:53:28Z",
+      "action": "confirm:implement",
+      "from": "implement",
+      "to": "implement",
+      "note": "自检确认"
+    },
+    {
+      "at": "2026-11-19T22:53:28Z",
+      "action": "advance",
+      "from": "implement",
+      "to": "security-review",
+      "note": ""
+    },
+    {
+      "at": "2026-11-19T22:53:32Z",
+      "action": "confirm:security-review",
+      "from": "security-review",
+      "to": "security-review",
+      "note": "自检确认"
+    },
+    {
+      "at": "2026-11-19T22:53:32Z",
+      "action": "advance",
+      "from": "security-review",
+      "to": "deploy",
+      "note": ""
+    },
+    {
+      "at": "2026-11-19T22:53:32Z",
+      "action": "confirm:deploy",
+      "from": "deploy",
+      "to": "deploy",
+      "note": "开发者确认"
+    },
+    {
+      "at": "2026-11-19T22:53:32Z",
+      "action": "advance",
+      "from": "deploy",
+      "to": "test",
+      "note": ""
     }
   ],
-  "updatedAt": "2026-11-19T22:26:47Z"
+  "updatedAt": "2026-11-19T22:53:32Z"
 }
