@@ -1,13 +1,13 @@
 {
   "activityId": "app_368013920e",
   "activityName": "未命名应用",
-  "status": "deploy",
+  "status": "test",
   "confirmed": {
     "requirements": true,
     "plan": true,
     "implement": true,
     "security-review": true,
-    "deploy": false,
+    "deploy": true,
     "test": false,
     "deliver": false,
     "done": false
@@ -103,7 +103,21 @@
       "from": "security-review",
       "to": "deploy",
       "note": ""
+    },
+    {
+      "at": "2026-11-19T20:48:46Z",
+      "action": "confirm:deploy",
+      "from": "deploy",
+      "to": "deploy",
+      "note": "开发者确认"
+    },
+    {
+      "at": "2026-11-19T20:48:46Z",
+      "action": "advance",
+      "from": "deploy",
+      "to": "test",
+      "note": ""
     }
   ],
-  "updatedAt": "2026-11-19T20:45:14Z"
+  "updatedAt": "2026-11-19T20:48:46Z"
 }
