@@ -49,9 +49,9 @@ function mockSdk(mode) {
   await pg.click('[data-act=continue]');
   check('续玩回到第 6 站', (await pg.textContent('.side h2')).includes('第 6 /'));
   await playAll(pg, info.james.slice(5));
-  check('詹姆斯路线结局', (await pg.textContent('h1')) === '真正的詹姆斯');
+  check('詹姆斯路线结局', (await pg.textContent('h1')) === '詹姆斯 100%');
   await pg.reload(); await pg.click('[data-act=continue]');
-  check('刷新后结局还在', (await pg.textContent('h1')) === '真正的詹姆斯');
+  check('刷新后结局还在', (await pg.textContent('h1')) === '詹姆斯 100%');
   await pg.click('[data-act=reset]');
   for (const p of [1,2,0,3,1,2,'r',1,1,3,1,'r']) {
     if (p === 'r') { await pg.click('[data-act=recall]'); check('★ 隐藏选项带论坛', await pg.$('.forumThread')); }
@@ -62,7 +62,7 @@ function mockSdk(mode) {
 
   // 晒战绩 6 种情况
   const cases = {
-    ok: ['发帖编辑器已打开', c => c.some(x => x[0] === 'openPostEditor' && x[1].tagId === '152660' && x[1].imageUrl.startsWith('https://') && x[1].title.includes('真正的詹姆斯')) && c.some(x => x[0] === 'uploadFile' && x[1].isBlob && x[1].type === 'image/png' && x[1].size > 10000)],
+    ok: ['发帖编辑器已打开', c => c.some(x => x[0] === 'openPostEditor' && x[1].tagId === '152660' && x[1].imageUrl.startsWith('https://') && x[1].title.includes('詹姆斯 100%') && x[1].content.includes('成分鉴定：詹姆斯 100%')) && c.some(x => x[0] === 'uploadFile' && x[1].isBlob && x[1].type === 'image/png' && x[1].size > 10000)],
     notag: ['发帖编辑器已打开', c => c.some(x => x[0] === 'openPostEditor' && !('tagId' in x[1]) && !('topicId' in x[1]))],
     nologin: ['登录虎扑后才能晒战绩', c => !c.some(x => x[0] === 'uploadFile' || x[0] === 'openPostEditor')],
     uploadfail: ['海报上传失败', c => !c.some(x => x[0] === 'openPostEditor')],

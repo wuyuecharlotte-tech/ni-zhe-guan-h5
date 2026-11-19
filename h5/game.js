@@ -91,11 +91,18 @@
     skill?h("div",{class:"note"},h("b",null,"已练技术"),h("br"),skill):null,
     chapterArt?art(...chapterArt):null));
  }
+ const shortName=n=>n.includes("魔术师")?"魔术师":n.includes("科比")?"科比":n.includes("阿德托昆博")?"字母哥":n.split("·").pop();
+ // 成分鉴定：每位球星按「对上的关键选择 / 他的关键选择总数」算相似度，立方后归一，取前四位，其余并入「其他球星」。
  function getResult(){
-  const exact=nodes.every((n,i)=>n.james===picks[i]); const james=routes.find(r=>r.name.includes("詹姆斯"));
-  if(exact&&james)return {exact,top:[{r:james,m:nodes.length}]};
-  const score=routes.filter(r=>r!==james).map(r=>({r,m:r.anchors.filter(([i,o])=>picks[i]===o).length})).filter(x=>x.m>=2).sort((a,b)=>b.m-a.m||b.m/b.r.anchors.length-a.m/a.r.anchors.length);
-  return {exact:false,top:score.length?score.filter(x=>x.m===score[0].m&&x.r.anchors.length===score[0].r.anchors.length).slice(0,3):[]};
+  const james=routes.find(r=>r.name.includes("詹姆斯"));
+  const exact=nodes.every((n,i)=>n.james===picks[i]);
+  if(exact&&james)return {exact,mix:[{r:james,pct:100}],other:0};
+  const raw=routes.map(r=>{const m=r.anchors.filter(([i,o])=>picks[i]===o).length;return {r,m,w:Math.pow(m/r.anchors.length,3)};}).filter(x=>x.m>0).sort((a,b)=>b.w-a.w||b.m-a.m);
+  const sum=raw.reduce((t,x)=>t+x.w,0);
+  const mix=sum?raw.slice(0,4).map(x=>({r:x.r,pct:Math.round(x.w/sum*100)})).filter(x=>x.pct>=3):[];
+  let over=mix.reduce((t,x)=>t+x.pct,0)-100;
+  for(let k=mix.length-1;k>=0&&over>0;k--){const cut=Math.min(over,mix[k].pct-1);mix[k].pct-=cut;over-=cut;}
+  return {exact:false,mix,other:Math.max(0,100-mix.reduce((t,x)=>t+x.pct,0))};
  }
  const badges={
   stats:{title:"技术统计优先",one:"赛后看了一眼表格；论坛说这叫认真。",more:"录像还没剪完，你的里程碑海报已经出了三版。",fan:"护卫队：数据是一场一场打出来的，你刷一个试试。",hot:"哥们，你的赛后回顾怎么还能按列排序？"},
@@ -142,10 +149,10 @@
   const stages={checking:"正在确认登录状态…",uploading:"正在上传海报…",opening:"正在打开发帖编辑器…"};
   postBtn.addEventListener("click",async()=>{
    if(postBtn.disabled)return; postBtn.disabled=true;
-   const names=data.players.map(p=>p.name).join("、");
+
    const res=await window.PLATFORM.share({blob,
-    title:"我的生涯结局："+data.heading+"｜你这冠算不算？",
-    content:"我在《你这冠算不算？》打完了 15 站生涯，结局是「"+data.heading+"」"+(names?"，球场上最像"+names:"")+"。你的生涯，这冠算不算？",
+    title:"我的生涯成分："+data.heading+"｜你这冠算不算？",
+    content:"我在《你这冠算不算？》打完了 15 站生涯，成分鉴定："+(data.mixText||"自成一派")+"。你的生涯，这冠算不算？",
     onStage:k=>{tip.textContent=stages[k]||"";}});
    tip.textContent=res.msg; postBtn.disabled=false;
   });
@@ -155,25 +162,29 @@
   document.body.append(modal);postBtn.focus();
  }
  function result(){
-  const {exact,top}=getResult(),a=audit();
-  const heading=exact?"真正的詹姆斯":a.leaning?"你这路子，有点詹":top.length>1?"混合生涯":top[0]?.r.name||"自成一派";
-  const opener=exact?"从选秀夜打到最后一场发布会，连场外的几次关键决定都对上了。首冠只是把你送上论坛首页。":a.leaning?"你不一定打得像他。但有几次，数据、话筒和下一份阵容名单，刚好都排在你最先要看的东西里。":top.length?"你的球场选择最接近这些球星原型。像谁，不等于复制了谁的冠军数。":"你的路线没有单一球星原型。论坛没能给你贴一个整齐的标签。";
+  const {exact,mix,other}=getResult(),a=audit();
+  const heading=mix.length?mix.slice(0,2).map(x=>shortName(x.r.name)+" "+x.pct+"%").join(" + "):"自成一派";
+  const mixText=mix.map(x=>shortName(x.r.name)+" "+x.pct+"%").join("、")+(other?"、其他球星 "+other+"%":"");
+  const opener=exact?"真正的詹姆斯。从选秀夜打到最后一场发布会，连场外的几次关键决定都对上了。首冠只是把你送上论坛首页。":a.leaning?"鉴定备注：你这路子，有点詹。数据、话筒和下一份阵容名单，刚好都排在你最先要看的东西里。":mix.length?"按你这 15 站的选择，论坛给你做了一次成分鉴定。像谁，不等于复制了谁的冠军数。":"你的路线对不上任何一位球星原型。论坛没能给你贴一个整齐的标签。";
   const ranked=a.dimensions.sort((x,y)=>a.sums[y]-a.sums[x]).slice(0,4); // 只翻最多的四笔
   const trust=trustAt(nodes.length),locker=trust>=3?"遇到问题，他愿意在同一个镜头里和你把话讲完。":trust<=-2?"球可以照传，但散场后他先走了。":"对外各说各的，回队里还能看同一份录像。";
   const hot=a.sums.stats>=2&&a.sums.mic>=2?"赛后问你今天怎么赢的，你说稍等，我把历史划成三个阶段给你讲。":a.sums.exit>=2&&a.sums.glory>=2?"主场字幕才打出下赛季再见，他已经在新城市采访里说我们了。":ranked.length?badges[ranked[0]].hot:"这回没刷出任何黑料。评论区决定延长讨论时间。";
   lastPoster={heading,opener,hot,
-   players:top.map(({r})=>({name:r.name,title:r.title})),
+   mixText,players:mix.map(({r,pct})=>({name:r.name,short:shortName(r.name),title:r.title,pct})),other,
    badges:ranked.map(k=>({title:badges[k].title,count:a.sums[k],line:a.sums[k]===1?badges[k].one:badges[k].more}))};
   const li=(title,text)=>h("li",null,h("b",null,title),h("p",{class:"chosen"},text));
   return h("section",{class:"card result"},
-   h("div",{class:"kicker"},"终场哨 / 生涯结算"),
+   h("div",{class:"kicker"},"终场哨 / 成分鉴定"),
    h("h1",{tabindex:"-1"},heading),
    h("p",{class:"context"},opener),
+   mix.length?[h("h2",null,"你的生涯成分"),h("div",{class:"mix"},
+    mix.map(({r,pct})=>h("div",{class:"mixRow"},h("div",{class:"mixHead"},h("b",null,r.name),h("span",{class:"mixPct"},pct+"%")),h("div",{class:"mixBar"},h("div",{width:pct+"%"})),h("p",{class:"chosen"},r.title))),
+    other?h("div",{class:"mixRow"},h("div",{class:"mixHead"},h("b",{class:"mixOther"},"其他球星"),h("span",{class:"mixPct"},other+"%")),h("div",{class:"mixBar"},h("div",{width:other+"%"}))):null),
+    h("p",{class:"chosen mb"},mix[0].r.name+"："+mix[0].r.description)]:null,
    forum(hot,"生涯结算",null,true),
    ranked.length?[h("h2",null,"论坛翻出来的旧账"),h("div",{class:"resultGrid mb"},ranked.map(k=>h("div",{class:"score"},
     h("b",null,badges[k].title),h("p",null,a.sums[k]===1?badges[k].one:badges[k].more),h("p",{class:"small"},badges[k].fan),h("span",{class:"small"},"触发 "+a.sums[k]+" 次"))))]:null,
    h("div",{class:"note"},h("b",null,"更衣室关系："),locker),
-   top.length?[h("h2",null,"球场上更像谁"),h("div",{class:"resultGrid"},top.map(({r})=>h("div",{class:"score"},h("b",null,r.name),h("p",null,r.title),h("p",{class:"chosen"},r.description))))]:null,
    h("div",{class:"actions sectionEnd"},btn("primary","poster","晒战绩"),btn("ghost","reset","再开一个生涯"),btn("ghost","back","改最后一站")),
    h("p",{class:"small posterStatus","aria-live":"polite"}),
    a.flagged.length?h("details",null,h("summary",null,"翻看这几笔旧账"),h("ol",null,a.flagged.map(({i,o,tags})=>li(nodes[i].title,o.text+" · "+tags.map(k=>badges[k].title).join("、"))))):null,

@@ -80,24 +80,32 @@ window.POSTER = (() => {
     ctx.fillStyle = C.hot; ctx.beginPath(); ctx.arc(PAD + 16, y + 22, 16, 0, Math.PI * 2); ctx.fill();
     text(ctx, '你这冠算不算？', PAD + 46, y + 2, 36, C.white, 800);
     roundRect(ctx, W - PAD - 190, y - 4, 190, 54, 27, 'rgba(255,255,255,.12)');
-    text(ctx, '生涯结算', W - PAD - 95, y + 9, 28, C.white, 700, 180, 1, 1, 'center');
+    text(ctx, '成分鉴定', W - PAD - 95, y + 9, 28, C.white, 700, 180, 1, 1, 'center');
     y += 130;
 
-    text(ctx, '我的生涯结局', PAD, y, 30, C.muted, 500); y += 52;
-    y = text(ctx, data.heading, PAD, y, 100, C.white, 800, W - PAD * 2, 2, 1.16) + 14;
+    text(ctx, '我的生涯成分', PAD, y, 30, C.muted, 500); y += 52;
+    y = text(ctx, data.heading, PAD, y, data.heading.length > 12 ? 76 : 100, C.white, 800, W - PAD * 2, 2, 1.16) + 14;
     const bar = ctx.createLinearGradient(PAD, 0, PAD + 220, 0); bar.addColorStop(0, C.gold); bar.addColorStop(1, C.hot);
     ctx.fillStyle = bar; ctx.fillRect(PAD, y, 220, 10); y += 44;
     y = text(ctx, data.opener, PAD, y, 34, C.muted, 400, W - PAD * 2, 3) + 46;
 
     if (data.players?.length) {
-      y = label(ctx, '球场上更像谁', y);
-      for (const p of data.players.slice(0, 3)) {
-        roundRect(ctx, PAD, y, W - PAD * 2, 128, 20, C.card, C.cardLine);
-        avatar(ctx, p.name, PAD + 76, y + 64, 44);
-        text(ctx, p.name, PAD + 144, y + 24, 38, C.white, 700, W - PAD * 2 - 170);
-        text(ctx, p.title, PAD + 144, y + 76, 27, C.muted, 400, W - PAD * 2 - 170);
+      y = label(ctx, '生涯成分', y);
+      const rowW = W - PAD * 2;
+      const row = (name, title, pct, drawAvatar) => {
+        roundRect(ctx, PAD, y, rowW, 128, 20, C.card, C.cardLine);
+        drawAvatar(PAD + 76, y + 58);
+        text(ctx, name, PAD + 144, y + 18, 38, C.white, 700, rowW - 360);
+        text(ctx, title, PAD + 144, y + 68, 26, C.muted, 400, rowW - 360);
+        text(ctx, pct + '%', PAD + rowW - 30, y + 26, 60, C.gold, 800, 220, 1, 1, 'right');
+        roundRect(ctx, PAD + 144, y + 108, rowW - 174, 8, 4, 'rgba(255,255,255,.12)');
+        const bw = Math.max(8, (rowW - 174) * pct / 100), bar = ctx.createLinearGradient(PAD + 144, 0, PAD + 144 + bw, 0);
+        bar.addColorStop(0, C.gold); bar.addColorStop(1, C.hot);
+        roundRect(ctx, PAD + 144, y + 108, bw, 8, 4, bar);
         y += 146;
-      }
+      };
+      for (const p of data.players.slice(0, 4)) row(p.name, p.title, p.pct, (cx, cy) => avatar(ctx, p.name, cx, cy, 44));
+      if (data.other) row('其他球星', '零零碎碎，各沾一点', data.other, (cx, cy) => { ctx.beginPath(); ctx.arc(cx, cy, 44, 0, Math.PI * 2); ctx.fillStyle = '#33415c'; ctx.fill(); text(ctx, '…', cx, cy - 30, 44, C.white, 800, 88, 1, 1, 'center'); });
       y += 26;
     }
 
