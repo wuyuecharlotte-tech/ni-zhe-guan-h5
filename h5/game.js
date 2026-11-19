@@ -4,14 +4,14 @@
  const {nodes,routes,sources}=window.GAME||{}; const app=document.querySelector("#app");
  if(!nodes?.length||!routes?.length){app.textContent="剧本没有加载，请刷新页面再试。";return;}
 
- // 虎扑全屏容器：启动时读一次顶部安全距离，取它和 CSS 安全区里较大的一个。
- try{
-  const px=Number(window.ColorboxAI?.getFullscreenSafeTop?.())||0;
-  if(px>0)document.documentElement.style.setProperty("--host-top",Math.round(px)+"px");
- }catch{}
-
- // 进度只保存在本次打开的页面里，不写浏览器存储。
+ // 进度存在本机：关掉页面再打开可以接着玩；读不到或数据不对就从头开始。
+ const SAVE_KEY="nzg-career-v1";
  const letters="ABCDE"; let page="home",picks=[],idx=0,selected=null,finished=false;
+ try{
+  const sv=JSON.parse(localStorage.getItem(SAVE_KEY)||"null");
+  if(sv&&Array.isArray(sv.picks)&&sv.picks.length<=nodes.length&&sv.picks.every((v,i)=>Number.isInteger(v)&&v>=0&&(v<nodes[i].options.length||(v===nodes[i].options.length&&(nodes[i].useSkill||nodes[i].relationshipPayoff))))){picks=sv.picks;finished=sv.finished===true&&picks.length===nodes.length;}
+ }catch{}
+ const save=()=>{try{localStorage.setItem(SAVE_KEY,JSON.stringify({picks,finished}));}catch{}};
  const btn=(cls,act,label,extra={})=>h("button",{class:cls,"data-act":act,...extra},label);
  const art=(name,caption,cls="sceneArt")=>h("figure",{class:cls},h("img",{src:"art/"+name+".webp",alt:caption,...(cls==="heroArt"?{fetchpriority:"high"}:{loading:"lazy"})}));
  const headline=s=>String(s??"").replace(/^《|》$/g,"");
@@ -110,21 +110,29 @@
  let lastPoster=null,posterBusy=false;
  async function openPoster(){
   if(posterBusy||!lastPoster)return; posterBusy=true;
-  let url="";
+  const data=lastPoster; let url="",blob=null;
   try{
-   const cv=window.POSTER.draw(lastPoster); const blob=await window.POSTER.toBlob(cv); url=URL.createObjectURL(blob);
+   blob=await window.POSTER.toBlob(window.POSTER.draw(data)); url=URL.createObjectURL(blob);
   }catch{posterBusy=false;const st=app.querySelector(".posterStatus");if(st)st.textContent="海报没生成出来，再点一次试试。";return;}
   const close=()=>{modal.remove();URL.revokeObjectURL(url);posterBusy=false;document.querySelector('[data-act="poster"]')?.focus();};
   const closeBtn=h("button",{class:"ghost",type:"button"},"关闭");closeBtn.addEventListener("click",close);
   const postBtn=h("button",{class:"primary",type:"button"},"发到虎扑");
-  const tip=h("p",{class:"small posterTip"},"这是你这份生涯的海报。");
-  postBtn.addEventListener("click",()=>{tip.textContent="预览版：正式版会在这里打开虎扑发帖编辑器，海报和文案已经填好，你确认后再发。";});
+  const tip=h("p",{class:"small posterTip","aria-live":"polite"},"这是你这份生涯的海报。点「发到虎扑」会打开发帖编辑器，你确认后才会发出。");
+  const stages={checking:"正在确认登录状态…",uploading:"正在上传海报…",opening:"正在打开发帖编辑器…"};
+  postBtn.addEventListener("click",async()=>{
+   if(postBtn.disabled)return; postBtn.disabled=true;
+   const names=data.players.map(p=>p.name).join("、");
+   const res=await window.PLATFORM.share({blob,
+    title:"我的生涯结局："+data.heading+"｜你这冠算不算？",
+    content:"我在《你这冠算不算？》打完了 15 站生涯，结局是「"+data.heading+"」"+(names?"，球场上最像"+names:"")+"。你的生涯，这冠算不算？",
+    onStage:k=>{tip.textContent=stages[k]||"";}});
+   tip.textContent=res.msg; postBtn.disabled=false;
+  });
   const modal=h("div",{class:"posterModal",role:"dialog","aria-modal":"true","aria-label":"晒战绩海报"},
-   h("div",{class:"posterBox"},h("img",{src:url,alt:"我的生涯结局海报：" + lastPoster.heading}),tip,h("div",{class:"actions posterActions"},postBtn,closeBtn)));
+   h("div",{class:"posterBox"},h("img",{src:url,alt:"我的生涯结局海报："+data.heading}),tip,h("div",{class:"actions posterActions"},postBtn,closeBtn)));
   modal.addEventListener("click",e=>{if(e.target===modal)close();});
   document.body.append(modal);postBtn.focus();
  }
- const host=u=>{try{return new URL(u).hostname.replace(/^www\./,"");}catch{return "";}};
  function result(){
   const {exact,top}=getResult(),a=audit();
   const heading=exact?"真正的詹姆斯":a.leaning?"你这路子，有点詹":top.length>1?"混合生涯":top[0]?.r.name||"自成一派";
@@ -152,7 +160,7 @@
    h("details",null,h("summary",null,"展开 20 位球星路线与史料"),
     h("p",{class:"small"},"剧情、采访台词与论坛回帖是游戏演绎。以下是取材参考。"),
     h("ol",null,routes.map(r=>h("li",null,h("b",null,r.name)," · "+r.title))),
-    h("ul",{class:"sources"},sources.map(s=>h("li",null,s.text,host(s.url)?h("span",{class:"small"}," · "+host(s.url)):null)))));
+    h("ul",{class:"sources"},sources.map(s=>h("li",null,s.text,s.site?h("span",{class:"small"}," · "+s.site):null)))));
  }
  function draw(advance=false){
   const view=page==="home"?home():page==="result"?result():play();
@@ -167,12 +175,17 @@
   switch(b.dataset.act){
    case "recall": {const n=nodes[idx];if(special(idx)){selected=n.options.length;draw();app.querySelector('[data-act="recall"]')?.focus({preventScroll:true});}break;}
    case "poster":openPoster();break;
-   case "continue":case "start":resume();break;
+   case "continue":case "start":window.PLATFORM?.applySafeTop();resume();break;
    case "home":page="home";draw(true);break;
-   case "reset":picks=[];finished=false;resume();break;
+   case "reset":picks=[];finished=false;save();resume();break;
    case "back":if(page==="result"){idx=nodes.length-1;page="play";}else idx=Math.max(0,idx-1);selected=picks[idx]??null;draw(true);break;
-   case "next":if(!Number.isInteger(selected))return;picks=picks.slice(0,idx);picks.push(selected);finished=picks.length===nodes.length;if(finished)page="result";else{idx++;selected=null;}draw(true);break;
+   case "next":if(!Number.isInteger(selected))return;picks=picks.slice(0,idx);picks.push(selected);finished=picks.length===nodes.length;save();if(finished)page="result";else{idx++;selected=null;}draw(true);break;
   }
  });
  draw();
+ // 首屏可用（首页已渲染、主图已加载、按钮可点）后再上报就绪；主图加载失败不上报。
+ const ready=()=>{if(app.querySelector("button"))window.ShaperPerformance?.markReady?.();};
+ const hero=app.querySelector(".heroArt img");
+ if(hero){if(hero.complete&&hero.naturalWidth>0)ready();else hero.addEventListener("load",ready,{once:true});}else ready();
+ window.addEventListener("shaper:performance:reset",ready);
 })();

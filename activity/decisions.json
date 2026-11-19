@@ -57,9 +57,10 @@
       "depends_on": [
         "D1"
       ],
-      "status": "deferred",
+      "status": "resolved",
       "note": "技能包含云服务能力；需求轮不提问，plan 静态预览确认后再引导式确认",
-      "presented": true
+      "presented": true,
+      "choice": "B"
     }
   ]
 }

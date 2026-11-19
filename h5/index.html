@@ -2,9 +2,64 @@
 <html lang="zh-CN"><head>
 <script type="application/json" id="colorbox-skill-usage">
 {
-  "skills": []
+  "skills": [
+    "colorbox-auth-get-user-info",
+    "colorbox-fullscreen-safe-top",
+    "colorbox-oss-upload-file",
+    "colorbox-request-bbs-open-post-editor"
+  ]
 }
-</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#171714"><meta name="description" content="一场 NBA 生涯分支文字游戏，从选秀夜打到最后一场发布会。"><title>你这冠算不算？｜生涯模拟</title><link rel="stylesheet" href="style.css"><script defer src="dom.js"></script><script defer src="data.js"></script><script defer src="forum.js"></script><script defer src="poster.js"></script><script defer src="game.js"></script></head><body>
+</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#171714"><meta name="description" content="一场 NBA 生涯分支文字游戏，从选秀夜打到最后一场发布会。"><title>你这冠算不算？｜生涯模拟</title><link rel="stylesheet" href="style.css"><script>
+/* 平台能力统一入口：顶部安全距离、晒战绩（登录校验 → 上传海报 → 打开发帖编辑器）。 */
+window.PLATFORM = (function () {
+  var safeTopApplied = false;
+  function applySafeTop() {
+    if (safeTopApplied) return;
+    var px = 0;
+    try {
+      if (window.ColorboxAI && typeof window.ColorboxAI.getFullscreenSafeTop === 'function') px = Number(window.ColorboxAI.getFullscreenSafeTop()) || 0;
+    } catch (e) { px = 0; }
+    if (px > 0) { document.documentElement.style.setProperty('--host-top', Math.round(px) + 'px'); safeTopApplied = true; }
+  }
+  var sharing = false;
+  // 返回 {ok, msg}；onStage 汇报进度：checking / uploading / opening
+  async function share(opts) {
+    if (sharing) return {ok: false, busy: true, msg: '正在处理上一张海报，稍等一下。'};
+    var C = window.ColorboxAI;
+    if (!C || !C.auth || !C.oss || !C.request || !C.request.bbs) return {ok: false, msg: '请在虎扑 App 内打开这个游戏，再来晒战绩。'};
+    sharing = true;
+    var stage = opts.onStage || function () {};
+    try {
+      stage('checking');
+      var me = await window.ColorboxAI.auth.getUserInfo();
+      if (!me || me.code !== 200) return {ok: false, msg: (me && me.message) || '没能确认登录状态，稍后再试。'};
+      if (!me.data || me.data.islogin !== 1) return {ok: false, msg: '登录虎扑后才能晒战绩，先去登录吧。'};
+      stage('uploading');
+      var up;
+      try { up = await window.ColorboxAI.oss.uploadFile({file: opts.blob, filename: 'career-poster-' + Date.now() + '.png'}); }
+      catch (e) { return {ok: false, msg: '海报上传失败' + (e && e.message ? '：' + e.message : '') + '，稍后再点一次。'}; }
+      var imageUrl = '';
+      try { var u = new URL(up && up.downloadUrl); if (u.protocol === 'https:' && u.hostname) imageUrl = u.href; } catch (e) {}
+      if (!imageUrl) return {ok: false, msg: '海报上传失败，稍后再点一次。'};
+      stage('opening');
+      var params = {title: opts.title, content: opts.content, imageUrl: imageUrl};
+      var bbs = null;
+      try { bbs = await window.ColorboxAI.bbsConfig.get(); } catch (e) { bbs = null; }
+      if (bbs && typeof bbs.bbsTagId === 'string' && bbs.bbsTagId.trim() !== '') {
+        params.topicId = bbs.bbsTopicId; params.tagId = bbs.bbsTagId; params.topicName = bbs.bbsTopicName; params.tagName = bbs.bbsTagName;
+      }
+      var res = await window.ColorboxAI.request.bbs.openPostEditor(params);
+      if (!res || res.code !== 200) return {ok: false, msg: (res && res.message) || '发帖编辑器没打开，稍后再点一次。'};
+      return {ok: true, msg: '发帖编辑器已打开，确认后就能发出。'};
+    } catch (e) {
+      return {ok: false, msg: '晒战绩没成功，稍后再点一次。'};
+    } finally { sharing = false; }
+  }
+  applySafeTop();
+  return {applySafeTop: applySafeTop, share: share};
+})();
+</script>
+<script defer src="dom.js"></script><script defer src="data.js"></script><script defer src="forum.js"></script><script defer src="poster.js"></script><script defer src="game.js"></script></head><body>
 <header class="top"><button type="button" class="wordmark" data-home aria-label="回到首页"><span class="ball" aria-hidden="true">◉</span> 你这冠算不算？</button><span class="edition"><b>V0.6</b></span></header>
 <main id="app" aria-live="polite"><p>正在进入球馆…</p></main>
 <noscript>请启用 JavaScript 后试玩。</noscript>

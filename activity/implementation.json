@@ -1,0 +1,8 @@
+{
+  "schemaVersion": "implementation_v1",
+  "runtime": "static",
+  "persistence": "none",
+  "activityApi": false,
+  "expectedVersion": "",
+  "note": "开发者选本地保存：纯静态 H5，进度存本机；晒战绩用平台上传与发帖能力"
+}

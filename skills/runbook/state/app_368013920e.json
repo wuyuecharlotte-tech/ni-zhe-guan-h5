@@ -1,12 +1,12 @@
 {
   "activityId": "app_368013920e",
   "activityName": "未命名应用",
-  "status": "plan",
+  "status": "deploy",
   "confirmed": {
     "requirements": true,
     "plan": true,
-    "implement": false,
-    "security-review": false,
+    "implement": true,
+    "security-review": true,
     "deploy": false,
     "test": false,
     "deliver": false,
@@ -40,7 +40,70 @@
       "from": "plan",
       "to": "plan",
       "note": "开发者确认"
+    },
+    {
+      "at": "2026-11-19T20:42:21Z",
+      "action": "advance",
+      "from": "plan",
+      "to": "implement",
+      "note": ""
+    },
+    {
+      "at": "2026-11-19T20:43:13Z",
+      "action": "configure",
+      "from": "implement",
+      "to": "implement",
+      "note": "开发者选本地保存：纯静态 H5，进度存本机；晒战绩用平台上传与发帖能力"
+    },
+    {
+      "at": "2026-11-19T20:44:06Z",
+      "action": "confirm:implement",
+      "from": "implement",
+      "to": "implement",
+      "note": "自检确认"
+    },
+    {
+      "at": "2026-11-19T20:44:06Z",
+      "action": "advance",
+      "from": "implement",
+      "to": "security-review",
+      "note": ""
+    },
+    {
+      "at": "2026-11-19T20:44:23Z",
+      "action": "reject",
+      "from": "security-review",
+      "to": "implement",
+      "note": ""
+    },
+    {
+      "at": "2026-11-19T20:45:06Z",
+      "action": "confirm:implement",
+      "from": "implement",
+      "to": "implement",
+      "note": "自检确认"
+    },
+    {
+      "at": "2026-11-19T20:45:06Z",
+      "action": "advance",
+      "from": "implement",
+      "to": "security-review",
+      "note": ""
+    },
+    {
+      "at": "2026-11-19T20:45:14Z",
+      "action": "confirm:security-review",
+      "from": "security-review",
+      "to": "security-review",
+      "note": "自检确认"
+    },
+    {
+      "at": "2026-11-19T20:45:14Z",
+      "action": "advance",
+      "from": "security-review",
+      "to": "deploy",
+      "note": ""
     }
   ],
-  "updatedAt": "2026-11-19T20:27:55Z"
+  "updatedAt": "2026-11-19T20:45:14Z"
 }

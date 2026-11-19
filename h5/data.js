@@ -118,19 +118,19 @@ window.GAME = (() => {
     R('马努·吉诺比利','第六个进场，最后一个下场','先在欧洲成名，低顺位进入NBA，接受第六人也能在马刺拿四冠；代表阿根廷还赢得奥运金牌。角色不是身价标签。',[[0,2],[2,2],[4,3],[5,3],[8,2],[11,3]])
   ];
   const sources = [
-    {text:'NBA Archive 75：历史球员档案',url:'https://www.nba.com/archive-75'},
-    {text:'NBA：詹姆斯生涯回顾（骑士、热火、湖人）',url:'https://www.nba.com/news/lebron-james-career-highlights'},
-    {text:'NBA：2010年代历史时刻（决定、回归及2016总决赛）',url:'https://www.nba.com/news/history-nba-top-moments-2010s'},
-    {text:'NBA：湖人正式签下詹姆斯',url:'https://www.nba.com/news/lebron-james-officially-signs-los-angeles-lakers'},
-    {text:'NBA：詹姆斯选择费城的自由市场经过',url:'https://www.nba.com/news/lebron-james-fourth-free-agency-decision-philadelphia-sixers'},
-    {text:'NBA：詹姆斯谈2016夺冠与自己的历史评价',url:'https://www.nba.com/news/lebron-cavaliers-championship-made-me-goat'},
-    {text:'NBA：勇士王朝时间线（库里脚踝与续约）',url:'https://www.nba.com/news/warriors-championship-timeline'},
-    {text:'NBA：加内特被交易到凯尔特人',url:'https://www.nba.com/news/legendary-moments-history-kevin-garnett-traded-boston-celtics-2007'},
-    {text:'NBA：历年次轮代表，约基奇第41顺位',url:'https://www.nba.com/news/top-second-round-picks-from-every-year-since-2014'},
-    {text:'NBA/雄鹿：扬尼斯第15顺位',url:'https://www.nba.com/bucks/release/bucks-sign-first-round-pick-giannis-antetokounmpo'},
-    {text:'名人堂：诺维茨基',url:'https://www.hoophall.com/hall-of-famers/dirk-nowitzki'},
-    {text:'名人堂：纳什',url:'https://www.hoophall.com/hall-of-famers/steve-nash'},
-    {text:'名人堂：吉诺比利',url:'https://www.hoophall.com/hall-of-famers/manu-ginobili'}
+    {text:'NBA Archive 75：历史球员档案',site:'NBA 官网'},
+    {text:'NBA：詹姆斯生涯回顾（骑士、热火、湖人）',site:'NBA 官网'},
+    {text:'NBA：2010年代历史时刻（决定、回归及2016总决赛）',site:'NBA 官网'},
+    {text:'NBA：湖人正式签下詹姆斯',site:'NBA 官网'},
+    {text:'NBA：詹姆斯选择费城的自由市场经过',site:'NBA 官网'},
+    {text:'NBA：詹姆斯谈2016夺冠与自己的历史评价',site:'NBA 官网'},
+    {text:'NBA：勇士王朝时间线（库里脚踝与续约）',site:'NBA 官网'},
+    {text:'NBA：加内特被交易到凯尔特人',site:'NBA 官网'},
+    {text:'NBA：历年次轮代表，约基奇第41顺位',site:'NBA 官网'},
+    {text:'NBA/雄鹿：扬尼斯第15顺位',site:'NBA 官网'},
+    {text:'名人堂：诺维茨基',site:'奈史密斯篮球名人堂官网'},
+    {text:'名人堂：纳什',site:'奈史密斯篮球名人堂官网'},
+    {text:'名人堂：吉诺比利',site:'奈史密斯篮球名人堂官网'}
   ];
   // New scenes use one fictional teammate and three authored, independent situations.
   const rel = (phase,title,context,james,payoff,opts) => {
@@ -175,12 +175,12 @@ window.GAME = (() => {
       : route.anchors.map(([j,choice])=>[oldToNew[j],choice]);
   });
   sources.push(
-    {text:"NBA 赛后访问：约基奇谈穆雷有些晚上就是队里第一人",url:"https://www.nba.com/watch/video/nikola-jokic-sometimes-jamal-murray-denver-nuggets-number-one-player"},
-    {text:"NBA：汤普森赛后评价库里的抢七表现",url:"https://www.nba.com/news/5-takeaways-warriors-kings-game-7"},
-    {text:'骑士：2016年总决赛第六场赛后，詹姆斯谈队友及教练的功劳（采访节录）',url:'https://www.nba.com/cavaliers/features/sounds-gswcle-160616'},
-    {text:'NBA／AP：2018年总决赛第一场赛后采访，詹姆斯不揣测J.R.史密斯的想法',url:'https://www.nba.com/news/lebron-james-left-disbelief-after-stellar-game-1-performance'},
-    {text:'NBA／AP：次战前采访，詹姆斯谈J.R.史密斯的反弹能力',url:'https://www.nba.com/news/jr-smith-eager-atone-game-1-gaffe'},
-    {text:'NBA刊载的现场采访：詹姆斯谈如何配合东契奇（2026年1月）',url:'https://www.nba.com/news/the-athletic-lebron-james-says-he-needs-to-fit-in-around-luka-doncic-as-duos-chemistry-grows'}
+    {text:"NBA 赛后访问：约基奇谈穆雷有些晚上就是队里第一人",site:"NBA 官网"},
+    {text:"NBA：汤普森赛后评价库里的抢七表现",site:"NBA 官网"},
+    {text:'骑士：2016年总决赛第六场赛后，詹姆斯谈队友及教练的功劳（采访节录）',site:'NBA 官网'},
+    {text:'NBA／AP：2018年总决赛第一场赛后采访，詹姆斯不揣测J.R.史密斯的想法',site:'NBA 官网'},
+    {text:'NBA／AP：次战前采访，詹姆斯谈J.R.史密斯的反弹能力',site:'NBA 官网'},
+    {text:'NBA刊载的现场采访：詹姆斯谈如何配合东契奇（2026年1月）',site:'NBA 官网'}
   );
   return {nodes:expanded,routes,sources};
 })();
