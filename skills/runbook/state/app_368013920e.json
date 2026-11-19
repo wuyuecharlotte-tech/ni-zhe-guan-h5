@@ -411,7 +411,56 @@
       "from": "deploy",
       "to": "test",
       "note": ""
+    },
+    {
+      "at": "2026-11-19T22:17:58Z",
+      "action": "reject",
+      "from": "test",
+      "to": "implement",
+      "note": ""
+    },
+    {
+      "at": "2026-11-19T22:19:37Z",
+      "action": "confirm:implement",
+      "from": "implement",
+      "to": "implement",
+      "note": "自检确认"
+    },
+    {
+      "at": "2026-11-19T22:19:37Z",
+      "action": "advance",
+      "from": "implement",
+      "to": "security-review",
+      "note": ""
+    },
+    {
+      "at": "2026-11-19T22:19:41Z",
+      "action": "confirm:security-review",
+      "from": "security-review",
+      "to": "security-review",
+      "note": "自检确认"
+    },
+    {
+      "at": "2026-11-19T22:19:41Z",
+      "action": "advance",
+      "from": "security-review",
+      "to": "deploy",
+      "note": ""
+    },
+    {
+      "at": "2026-11-19T22:19:42Z",
+      "action": "confirm:deploy",
+      "from": "deploy",
+      "to": "deploy",
+      "note": "开发者确认"
+    },
+    {
+      "at": "2026-11-19T22:19:42Z",
+      "action": "advance",
+      "from": "deploy",
+      "to": "test",
+      "note": ""
     }
   ],
-  "updatedAt": "2026-11-19T22:17:23Z"
+  "updatedAt": "2026-11-19T22:19:42Z"
 }

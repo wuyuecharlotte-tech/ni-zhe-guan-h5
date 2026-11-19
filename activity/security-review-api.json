@@ -1,11 +1,11 @@
 {
-  "sourceSha256": "4964cb5d6fc9391922439503243f0b43728f8dadbda135cec01e1c820b821670",
+  "sourceSha256": "e27b5b5031e92a5debc8f4bd9a556d9c85be77085d2c40c7f486a88cc123e1fe",
   "api": {
     "success": true,
     "schemaVersion": "code_package_validation_v1",
     "validatorVersion": "source-package-static-v18",
-    "requestId": "req-gxg",
-    "packageSha256": "30e346a2b12f6757090d339193793a086ae37bb201135c0ebe437fa07e381115",
+    "requestId": "req-gza",
+    "packageSha256": "dbed921ed3a2568adaefefa3926aca91dd480e6dba7f62cd88fb76e3e5c62611",
     "submissionAllowed": true,
     "data": {
       "schemaVersion": "security_review_json_v1",
@@ -14,7 +14,7 @@
       "summary": "未发现明显风险，发布安全门禁检查通过。",
       "package": {
         "packageId": "",
-        "archiveSha256": "30e346a2b12f6757090d339193793a086ae37bb201135c0ebe437fa07e381115",
+        "archiveSha256": "dbed921ed3a2568adaefefa3926aca91dd480e6dba7f62cd88fb76e3e5c62611",
         "fileCount": 10,
         "analyzedFileCount": 7,
         "skippedFileCount": 3
