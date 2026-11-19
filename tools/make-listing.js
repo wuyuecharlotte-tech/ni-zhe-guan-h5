@@ -8,6 +8,8 @@ const out = path.resolve(__dirname, '../listing');
   await pg.goto('file://' + path.resolve(__dirname, '../h5/index.html'));
   const shot = (n) => pg.screenshot({path: path.join(out, 'screenshots', n + '.png')});
   const james = await pg.evaluate(() => window.GAME.nodes.map(n => n.james));
+  // 0 首页
+  await pg.waitForFunction(() => { const i = document.querySelector('.heroArt img'); return i && i.complete; }); await shot('0-首页');
   await pg.click('[data-act=start]');
   // 1 实机：第 1 站选项 + 即时结果
   await pg.click(`[data-pick="${james[0]}"]`); await pg.evaluate(() => document.querySelector('.choices').scrollIntoView()); await shot('1-选择');
@@ -15,7 +17,7 @@ const out = path.resolve(__dirname, '../listing');
   await pg.click('.forumThread summary'); await pg.evaluate(() => document.querySelector('.forumThread').scrollIntoView()); await shot('2-论坛');
   for (let i = 0; i < james.length; i++) {
     await pg.click(`[data-pick="${james[i]}"]`);
-    if (i === 6) { await pg.click('.forumThread summary'); await pg.evaluate(() => document.querySelector('.feedback').scrollIntoView()); await shot('3-总决赛'); }
+    if (i === 6) { await pg.click('.forumThread summary'); await pg.evaluate(() => document.querySelector('.feedback').scrollIntoView()); await shot('3-论坛热议'); }
     await pg.click('[data-act=next]');
   }
   // 4 结局
